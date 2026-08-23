@@ -84,7 +84,7 @@ const REMINDER_PRESETS = [
 ];
 
 export default function HouseholdPortal() {
-  const { user, medicines, addMedicine, donateToNgo, schedulePickup, submitForVerification } =
+  const { user, medicines, wasteManifests, addMedicine, donateToNgo, schedulePickup, submitForVerification } =
     useApp();
   const [showForm, setShowForm] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
@@ -93,7 +93,7 @@ export default function HouseholdPortal() {
   const [ocrResult, setOcrResult] = useState<any | null>(null);
 
   const [activeTabSection, setActiveTabSection] = useState<
-    'inventory' | 'ocr_reader' | 'waste_classifier' | 'reminders'
+    'inventory' | 'my_pickups' | 'ocr_reader' | 'waste_classifier' | 'reminders'
   >('inventory');
   const [pickupTarget, setPickupTarget] = useState<MedicineBatch | null>(null);
   const [pickupAddressInput, setPickupAddressInput] = useState('');
@@ -115,6 +115,9 @@ export default function HouseholdPortal() {
     ['approved', 'donated', 'requested', 'allocated'].includes(m.status)
   ).length;
   const scheduled = owned.filter((m) => m.status === 'pickup_scheduled').length;
+  const householdPickups = owned.filter(
+    (m) => m.status === 'pickup_scheduled' || m.status === 'disposed' || m.pickupId
+  );
 
   const update =
     (key: keyof typeof form) => (value: string) =>
@@ -245,6 +248,16 @@ export default function HouseholdPortal() {
           }`}
         >
           FEFO Cabinet Inventory ({owned.length})
+        </button>
+        <button
+          onClick={() => setActiveTabSection('my_pickups')}
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+            activeTabSection === 'my_pickups'
+              ? 'border-emerald-600 text-emerald-700 font-bold'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          My Waste Pickup Status ({householdPickups.length})
         </button>
         <button
           onClick={() => setActiveTabSection('ocr_reader')}
@@ -418,6 +431,127 @@ export default function HouseholdPortal() {
                   onSubmit={() => submitForVerification(medicine.id)}
                 />
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* SECTION: MY WASTE PICKUP STATUS TRACKER */}
+      {activeTabSection === 'my_pickups' && (
+        <div className="space-y-6 font-sans text-xs">
+          <div className="border border-slate-200 bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="font-bold text-base text-slate-900">My Waste Pickup Status</h3>
+            <p className="text-slate-600 text-xs mt-1 leading-relaxed">
+              Track the real-time disposal status of your submitted bio-hazard medicine pickups.
+            </p>
+          </div>
+
+          {householdPickups.length === 0 ? (
+            <EmptyState
+              icon={Truck}
+              title="No active waste pickup requests"
+              description="Expired medicines scheduled for bio-hazard pickup will display their 4-step disposal progress here."
+            />
+          ) : (
+            <div className="space-y-4">
+              {householdPickups.map((medicine) => {
+                const linkedWaste = wasteManifests.find(
+                  (w) => w.id === medicine.pickupId || w.batchId === medicine.id
+                );
+                const isDisposed =
+                  medicine.status === 'disposed' || linkedWaste?.status === 'incinerated';
+
+                const currentStep = isDisposed ? 4 : 3;
+
+                const steps = [
+                  { step: 1, label: 'Requested', detail: 'Scan logged' },
+                  { step: 2, label: 'Collector Assigned', detail: 'Route scheduled' },
+                  { step: 3, label: 'In Transit', detail: 'En route to CBWTF' },
+                  { step: 4, label: 'Safely Disposed', detail: '850°C Incineration / Autoclaved' },
+                ];
+
+                return (
+                  <div
+                    key={medicine.id}
+                    className="border border-slate-200 bg-white p-6 rounded-xl shadow-sm space-y-6"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-slate-900 text-base">
+                            {medicine.brandName}
+                          </h4>
+                          <span className="text-xs font-normal text-slate-500">
+                            ({medicine.genericName})
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 mt-1">
+                          Batch: <b className="font-mono text-slate-900">{medicine.batchNumber}</b> · Quantity:{' '}
+                          <b className="text-slate-900">{medicine.quantity} units</b>
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {isDisposed ? (
+                          <span className="inline-flex items-center gap-1.5 border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 rounded-full">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                            Safely Disposed
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800 rounded-full">
+                            <Truck className="h-3.5 w-3.5 text-amber-600 animate-pulse" />
+                            In Transit
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 4-Step Progress Tracker Bar */}
+                    <div className="relative font-sans">
+                      <div className="grid grid-cols-4 gap-2 text-center">
+                        {steps.map((s) => {
+                          const isComplete = s.step < currentStep || (s.step === 4 && isDisposed);
+                          const isCurrent = s.step === currentStep && !isDisposed;
+
+                          return (
+                            <div key={s.step} className="flex flex-col items-center relative z-10">
+                              <div
+                                className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-xs font-bold transition-all ${
+                                  isComplete
+                                    ? 'border-emerald-600 bg-emerald-600 text-white shadow-sm'
+                                    : isCurrent
+                                      ? 'border-emerald-600 bg-emerald-50 text-emerald-700 ring-4 ring-emerald-100'
+                                      : 'border-slate-200 bg-slate-50 text-slate-400'
+                                }`}
+                              >
+                                {isComplete ? (
+                                  <Check className="h-5 w-5 stroke-[2.5]" />
+                                ) : (
+                                  <span>0{s.step}</span>
+                                )}
+                              </div>
+                              <p
+                                className={`mt-3 font-bold text-xs ${
+                                  isComplete
+                                    ? 'text-emerald-800'
+                                    : isCurrent
+                                      ? 'text-emerald-700'
+                                      : 'text-slate-400'
+                                }`}
+                              >
+                                {s.label}
+                              </p>
+                              <p className="mt-0.5 text-[11px] text-slate-500 font-medium">
+                                {s.detail}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

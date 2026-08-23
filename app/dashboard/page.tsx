@@ -42,18 +42,18 @@ const allPortalTabs: {
 ];
 
 function getPermittedTabs(role?: DbRole): Persona[] {
-  if (!role) return ['household', 'pharmacist', 'ngo', 'waste'];
+  if (!role) return ['household', 'pharmacist', 'ngo'];
   switch (role) {
     case 'HOUSEHOLD':
-      return ['household', 'waste'];
+      return ['household'];
     case 'PHARMACIST':
-      return ['pharmacist', 'waste'];
+      return ['pharmacist'];
     case 'NGO':
-      return ['ngo', 'waste'];
+      return ['ngo'];
     case 'WASTE_COLLECTOR':
       return ['waste', 'household', 'pharmacist', 'ngo'];
     default:
-      return ['household', 'waste'];
+      return ['household'];
   }
 }
 
@@ -70,16 +70,7 @@ export default function DashboardPage() {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab') as Persona | null;
       if (tabParam && ['household', 'pharmacist', 'ngo', 'waste'].includes(tabParam)) {
-        if (user) {
-          const userPermitted = getPermittedTabs(user.role);
-          if (userPermitted.includes(tabParam)) {
-            setActiveTab(tabParam);
-          } else {
-            setActiveTab(user.persona);
-          }
-        } else {
-          setActiveTab(tabParam);
-        }
+        setActiveTab(tabParam);
         return;
       }
     }
@@ -90,11 +81,6 @@ export default function DashboardPage() {
 
   const switchPortal = (persona: Persona) => {
     if (!user) {
-      setAuthOpen(true);
-      return;
-    }
-    const userPermitted = getPermittedTabs(user.role);
-    if (!userPermitted.includes(persona)) {
       setAuthOpen(true);
       return;
     }
@@ -194,7 +180,7 @@ export default function DashboardPage() {
       <div className="relative z-10 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
         <div className="mx-auto max-w-[1440px] px-6 md:px-8">
           <nav className="flex space-x-1 overflow-x-auto py-2 text-xs font-sans">
-            {allPortalTabs.map((tab) => {
+            {visiblePortalTabs.map((tab) => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
               const isPermitted = permittedTabs.includes(tab.id);

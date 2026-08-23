@@ -47,7 +47,7 @@ const WASTE_COLOR_CODES = [
 ];
 
 export default function WasteCollectorModule() {
-  const { wasteManifests, confirmDestruction } = useApp();
+  const { user, wasteManifests, confirmDestruction } = useApp();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [activeTabSection, setActiveTabSection] = useState<'manifests' | 'routes' | 'telemetry' | 'chain_of_custody'>('manifests');
   const [handoffStep, setHandoffStep] = useState<number>(1);
@@ -57,6 +57,8 @@ export default function WasteCollectorModule() {
 
   // Supabase Realtime Telemetry WebSocket Subscription
   useEffect(() => {
+    if (user?.role !== 'WASTE_COLLECTOR') return;
+
     const channel = supabase
       .channel('waste_telemetry_realtime')
       .on(
@@ -76,7 +78,25 @@ export default function WasteCollectorModule() {
       supabase.removeChannel(channel);
       clearInterval(interval);
     };
-  }, []);
+  }, [user?.role]);
+
+  // Strict Security Guard Check for Unprivileged Personas
+  if (user?.role !== 'WASTE_COLLECTOR') {
+    return (
+      <div className="mx-auto my-12 max-w-2xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-lg font-sans">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 border border-red-200 text-red-600 mb-5">
+          <ShieldAlert className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">Access Restricted</h2>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700 font-medium">
+          Access Restricted: The Bio-Medical Waste Telemetry Portal &amp; Pickup Routes are reserved exclusively for authorized CBWTF operators.
+        </p>
+        <div className="mt-6 border-t border-slate-100 pt-4 text-xs text-slate-500">
+          CBWTF license verification required for thermal telemetry logs, vehicle manifests, and CDSCO Form-IV regulatory reports.
+        </div>
+      </div>
+    );
+  }
 
   const pending = wasteManifests.filter((w) => w.status === 'pickup_pending').length;
   const complete = wasteManifests.filter((w) => w.status === 'incinerated').length;
