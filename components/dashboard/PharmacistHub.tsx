@@ -35,16 +35,28 @@ import {
   X,
   Copy,
   ExternalLink,
+  ShieldAlert,
+  Sliders,
+  CheckSquare,
+  AlertTriangle,
 } from 'lucide-react';
+
+const CDSCO_RULE96_GUARDRAILS = [
+  { id: '1', rule: 'Intact Blister Foil Seal', requirement: 'Must be 100% sealed without puncture', status: 'PASS', color: 'text-emerald-700' },
+  { id: '2', rule: 'Liquid Syrup Quarantine', requirement: 'Opened oral liquids auto-rejected', status: 'PASS', color: 'text-emerald-700' },
+  { id: '3', rule: 'Schedule H/X Controlled Substances', requirement: 'Narcotics permit check required', status: 'RESTRICTED', color: 'text-amber-700' },
+  { id: '4', rule: 'GS1 2D DataMatrix Serial', requirement: '(01) GTIN + (17) Expiry verified', status: 'PASS', color: 'text-emerald-700' },
+];
 
 export default function PharmacistHub() {
   const { medicines, approveBatch, rejectBatch } = useApp();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [selectedBatch, setSelectedBatch] = useState<MedicineBatch | null>(null);
   const [showScanModal, setShowScanModal] = useState(false);
-  const [activeTabSection, setActiveTabSection] = useState<'verification' | 'subsidized_catalog' | 'cdsco_panel'>('verification');
+  const [activeTabSection, setActiveTabSection] = useState<'verification' | 'blister_inspection' | 'subsidized_catalog' | 'cdsco_panel'>('verification');
   const [blockchainProof, setBlockchainProof] = useState<any | null>(null);
   const [generatingProof, setGeneratingProof] = useState(false);
+  const [listedForSubsidized, setListedForSubsidized] = useState<Record<string, boolean>>({});
 
   const pendingList = useMemo(
     () => medicines.filter((m) => m.status === 'pending_verification' || m.status === 'logged'),
@@ -81,12 +93,19 @@ export default function PharmacistHub() {
     setGeneratingProof(false);
   }
 
+  const toggleSubsidizedListing = (id: string) => {
+    setListedForSubsidized((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
     <div className="space-y-8 font-sans">
       <SectionHeader
         eyebrow="CDSCO Inspection &amp; EIP-712 Proofs"
         title="Pharmacist Verification Hub"
-        description="Verify packaging integrity, cross-reference CDSCO Rule 96 DataMatrix barcodes, sign EIP-712 typed-data proofs, and approve batches."
+        description="Audit physical blister integrity, enforce Rule 96 guardrails, sign EIP-712 Polygon proofs, and approve subsidized marketplace listings."
         action={
           <div className="flex gap-2 text-xs font-sans">
             <Button
@@ -112,16 +131,16 @@ export default function PharmacistHub() {
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm font-sans">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Subsidized Vault Batches</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Subsidized Marketplace Vault</p>
           <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{approvedList.length}</p>
         </div>
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-200 text-xs font-sans">
+      <div className="flex border-b border-slate-200 text-xs font-sans overflow-x-auto">
         <button
           onClick={() => setActiveTabSection('verification')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'verification'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -130,24 +149,34 @@ export default function PharmacistHub() {
           Inspection Queue ({pendingList.length})
         </button>
         <button
+          onClick={() => setActiveTabSection('blister_inspection')}
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+            activeTabSection === 'blister_inspection'
+              ? 'border-emerald-600 text-emerald-700 font-bold'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          Blister Packaging Audit Tool
+        </button>
+        <button
           onClick={() => setActiveTabSection('subsidized_catalog')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'subsidized_catalog'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
-          Subsidized Pharmacy Catalog ({approvedList.length})
+          Subsidized Marketplace ({approvedList.length})
         </button>
         <button
           onClick={() => setActiveTabSection('cdsco_panel')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'cdsco_panel'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
-          Rule 96 Compliance Panel
+          Rule 96 Guardrails
         </button>
       </div>
 
@@ -244,71 +273,103 @@ export default function PharmacistHub() {
         </div>
       )}
 
-      {/* SECTION 2: SUBSIDIZED CATALOG */}
-      {activeTabSection === 'subsidized_catalog' && (
-        <div className="space-y-4 font-sans text-xs">
-          <div className="border border-slate-200 bg-white p-6 rounded-xl">
-            <h3 className="font-bold text-base text-slate-900">Subsidized Pharmacy Distribution Catalog</h3>
-            <p className="text-slate-600 text-xs mt-1 leading-relaxed">
-              CDSCO verified unexpired pharmaceutical inventory available for subsidized community distribution.
-            </p>
-          </div>
+      {/* SECTION 2: BLISTER PACKAGING AUDIT TOOL */}
+      {activeTabSection === 'blister_inspection' && (
+        <div className="border border-slate-200 bg-white p-6 rounded-xl space-y-4 shadow-sm font-sans text-xs">
+          <h3 className="font-bold text-base text-slate-900">Physical &amp; Digital Blister Integrity Audit</h3>
+          <p className="text-slate-600 text-xs">
+            Inspect donated medicine foil seals, check color degradation, and verify serial barcodes before listing.
+          </p>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {approvedList.map((med) => (
-              <div key={med.id} className="border border-slate-200 bg-white p-5 rounded-xl space-y-3 shadow-sm">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-bold text-base text-slate-900">{med.brandName}</h4>
-                    <p className="text-slate-600 text-xs">{med.genericName}</p>
-                  </div>
-                  <span className="border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                    RULE 96 VERIFIED
-                  </span>
-                </div>
-                <div className="border border-slate-200 bg-slate-50 p-3 rounded-lg text-xs space-y-1 font-sans">
-                  <p className="text-slate-800">Batch: <span className="font-mono font-bold">{med.batchNumber}</span></p>
-                  <p className="text-slate-800">Quantity: <span className="font-bold">{med.quantity} units</span></p>
-                  <p className="text-slate-800">Expiry: <span>{formatDate(med.expiryDate)}</span></p>
-                </div>
-              </div>
-            ))}
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="border border-emerald-200 bg-emerald-50 p-4 rounded-lg space-y-1">
+              <span className="font-bold text-emerald-800">1. Seal Integrity Test</span>
+              <p className="text-slate-700 text-xs">Verifies air-tight aluminum foil backing and blister pocket seals.</p>
+            </div>
+            <div className="border border-emerald-200 bg-emerald-50 p-4 rounded-lg space-y-1">
+              <span className="font-bold text-emerald-800">2. Formulation Degradation</span>
+              <p className="text-slate-700 text-xs">Spectrophotometric color shift and moisture exposure check.</p>
+            </div>
+            <div className="border border-emerald-200 bg-emerald-50 p-4 rounded-lg space-y-1">
+              <span className="font-bold text-emerald-800">3. Rule 96 Serialization</span>
+              <p className="text-slate-700 text-xs">GS1 DataMatrix GTIN cross-reference against manufacturer registry.</p>
+            </div>
           </div>
         </div>
       )}
 
-      {/* SECTION 3: RULE 96 COMPLIANCE PANEL */}
-      {activeTabSection === 'cdsco_panel' && (
+      {/* SECTION 3: SUBSIDIZED MARKETPLACE */}
+      {activeTabSection === 'subsidized_catalog' && (
         <div className="space-y-4 font-sans text-xs">
-          <div className="border border-slate-200 bg-white p-6 rounded-xl">
-            <h3 className="font-bold text-base text-slate-900">CDSCO Rule 96 Serialization Rules</h3>
+          <div className="border border-slate-200 bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="font-bold text-base text-slate-900">Subsidized Pharmacy Distribution Vault</h3>
             <p className="text-slate-600 text-xs mt-1 leading-relaxed">
-              Automated compliance checklist verified upon every packaging camera scan.
+              Pharmacist-verified unexpired medicines approved for subsidized NGO &amp; low-income clinic distribution.
             </p>
           </div>
 
-          <div className="border border-slate-200 bg-white p-6 rounded-xl space-y-3 text-xs font-sans">
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-              <div>
-                <p className="font-bold text-slate-900">GS1 2D DataMatrix Encoding</p>
-                <p className="text-slate-600">Application Identifiers (01) GTIN, (17) Expiry, (10) Batch Number validated.</p>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {approvedList.map((med) => {
+              const isListed = listedForSubsidized[med.id] ?? true;
+              return (
+                <div key={med.id} className="border border-slate-200 bg-white p-5 rounded-xl space-y-3 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h4 className="font-bold text-base text-slate-900">{med.brandName}</h4>
+                        <p className="text-slate-600 text-xs">{med.genericName}</p>
+                      </div>
+                      <span className="border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                        RULE 96 VERIFIED
+                      </span>
+                    </div>
+                    <div className="border border-slate-200 bg-slate-50 p-3 rounded-lg text-xs space-y-1 font-sans">
+                      <p className="text-slate-800">Batch #: <span className="font-mono font-bold">{med.batchNumber}</span></p>
+                      <p className="text-slate-800">Quantity: <span className="font-bold">{med.quantity} units</span></p>
+                      <p className="text-slate-800">Expiry: <span>{formatDate(med.expiryDate)}</span></p>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200 flex justify-between items-center">
+                    <span className="text-xs text-slate-600">Marketplace Listing:</span>
+                    <button
+                      onClick={() => toggleSubsidizedListing(med.id)}
+                      className={`px-3 py-1 font-semibold text-xs border rounded-full transition-colors ${
+                        isListed
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-800 font-semibold'
+                          : 'border-slate-300 bg-white text-slate-600'
+                      }`}
+                    >
+                      {isListed ? 'ACTIVE LISTING' : 'PAUSED'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 4: CDSCO RULE 96 GUARDRAILS */}
+      {activeTabSection === 'cdsco_panel' && (
+        <div className="space-y-4 font-sans text-xs">
+          <div className="border border-slate-200 bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="font-bold text-base text-slate-900">CDSCO Rule 96 Automatic Compliance Guardrails</h3>
+            <p className="text-slate-600 text-xs mt-1 leading-relaxed">
+              System rules enforcing automated rejection of non-compliant, unsealed, or restricted pharmaceuticals.
+            </p>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            {CDSCO_RULE96_GUARDRAILS.map((g) => (
+              <div key={g.id} className="border border-slate-200 bg-white p-5 rounded-xl space-y-2 shadow-sm">
+                <div className="flex justify-between items-start">
+                  <h4 className="font-bold text-slate-900 text-sm">{g.rule}</h4>
+                  <span className={`font-bold text-xs ${g.color}`}>{g.status}</span>
+                </div>
+                <p className="text-xs text-slate-600">{g.requirement}</p>
               </div>
-            </div>
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-              <div>
-                <p className="font-bold text-slate-900">Cryptographic Inspector Signature</p>
-                <p className="text-slate-600">EIP-712 typed-data signature with polygon chain consensus.</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-              <div>
-                <p className="font-bold text-slate-900">Anti-Counterfeiting Ledger Anchor</p>
-                <p className="text-slate-600">Keccak256 hash committed to Polygon Amoy Testnet (Chain ID 80002).</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       )}

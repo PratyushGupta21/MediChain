@@ -31,7 +31,18 @@ import {
   Clock,
   TrendingUp,
   Boxes,
+  Filter,
+  Coins,
 } from 'lucide-react';
+
+const THERAPEUTIC_CLASSES = [
+  'ALL CLASSES',
+  'ANTIBIOTICS',
+  'ANALGESICS',
+  'CARDIAC',
+  'ANTIDIABETIC',
+  'RESPIRATORY',
+];
 
 const PROVENANCE_STAGES = [
   { step: '01', title: 'Household / Pharmacy Donor', detail: 'Cataloged with GS1 GTIN barcode & packaging telemetry.', status: 'COMPLETED' },
@@ -43,6 +54,7 @@ const PROVENANCE_STAGES = [
 export default function NgoHub() {
   const { medicines, requestAllocation } = useApp();
   const [search, setSearch] = useState('');
+  const [selectedClass, setSelectedClass] = useState('ALL CLASSES');
   const [selected, setSelected] = useState<MedicineBatch | null>(null);
   const [showProvenance, setShowProvenance] = useState<MedicineBatch | null>(null);
   const [activeTabSection, setActiveTabSection] = useState<'catalog' | 'health_credits' | 'provenance'>('catalog');
@@ -78,14 +90,14 @@ export default function NgoHub() {
       <SectionHeader
         eyebrow="Patient Redistribution &amp; Health Credits"
         title="NGO / Patient Hub"
-        description="Source verified unexpired medicines ranked by FEFO urgency, track QR provenance timelines, and manage donor health credits."
+        description="Source verified unexpired medicines ranked by FEFO urgency, filter by therapeutic class, track QR origin timelines, and redeem Health Credits."
       />
 
       {/* Health Credits Summary Banner */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="border border-slate-200 bg-white p-5 text-xs font-sans rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs uppercase text-slate-500 font-semibold">Health Credits</span>
+            <span className="text-xs uppercase text-slate-500 font-semibold">Health Credit Balance</span>
             <Award className="h-5 w-5 text-emerald-600" />
           </div>
           <p className="mt-2 text-3xl font-bold text-slate-900">1,450 PTS</p>
@@ -112,30 +124,30 @@ export default function NgoHub() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-200 text-xs font-sans">
+      <div className="flex border-b border-slate-200 text-xs font-sans overflow-x-auto">
         <button
           onClick={() => setActiveTabSection('catalog')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'catalog'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
-          Sourcing Catalog ({catalog.length})
+          Subsidized Sourcing Catalog ({catalog.length})
         </button>
         <button
           onClick={() => setActiveTabSection('health_credits')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'health_credits'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
-          Health Credits Engine
+          Health Credit Token Redemption
         </button>
         <button
           onClick={() => setActiveTabSection('provenance')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'provenance'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -158,9 +170,21 @@ export default function NgoHub() {
                 className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-4 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
               />
             </div>
-            <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-xs text-emerald-700 font-bold shadow-sm">
-              <Zap className="h-3.5 w-3.5" />
-              Sorted by FEFO Urgency
+            
+            {/* Therapeutic Class Filter Dropdown */}
+            <div className="flex items-center gap-2 border border-slate-300 bg-white rounded-lg px-3 py-2 text-xs font-sans">
+              <Filter className="h-3.5 w-3.5 text-emerald-600" />
+              <select
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+                className="bg-transparent outline-none text-slate-800 font-semibold cursor-pointer"
+              >
+                {THERAPEUTIC_CLASSES.map((cls) => (
+                  <option key={cls} value={cls}>
+                    {cls}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -239,11 +263,11 @@ export default function NgoHub() {
         </div>
       )}
 
-      {/* SECTION 2: HEALTH CREDITS ENGINE */}
+      {/* SECTION 2: HEALTH CREDIT TOKEN REDEMPTION */}
       {activeTabSection === 'health_credits' && (
         <div className="space-y-4 font-sans text-xs">
           <div className="border border-slate-200 bg-white p-6 rounded-xl space-y-3 shadow-sm">
-            <h3 className="font-bold text-base text-slate-900">Health Credits Reward Points Engine</h3>
+            <h3 className="font-bold text-base text-slate-900">Health Credit Token Redemption Engine</h3>
             <p className="text-slate-600 text-xs leading-relaxed">
               Earn 150 Health Credits per verified pharmaceutical donation batch allocated to community health centers. Redeem points for subsidized transport and regulatory audits.
             </p>
@@ -257,19 +281,28 @@ export default function NgoHub() {
           </div>
 
           <div className="border border-slate-200 bg-white p-5 rounded-xl shadow-sm">
-            <h4 className="font-bold text-sm text-slate-900 uppercase mb-3">Recent Credit Allocations</h4>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-800">Augmentin 625 Duo (Batch #AUG-2026-88)</span>
-                <span className="text-emerald-700 font-bold">+150 PTS</span>
+            <h4 className="font-bold text-sm text-slate-900 uppercase mb-3">Redemption Options</h4>
+            <div className="grid gap-3 sm:grid-cols-2 text-xs">
+              <div className="border border-slate-200 bg-slate-50 p-4 rounded-lg space-y-2">
+                <div className="flex justify-between font-bold text-slate-900">
+                  <span>Subsidized Cold-Chain Transport</span>
+                  <span className="text-emerald-700">500 PTS</span>
+                </div>
+                <p className="text-slate-600">Redeem tokens to cover refrigerated van dispatch for antibiotic delivery.</p>
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg w-full">
+                  Redeem 500 Credits
+                </Button>
               </div>
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-800">Amoxicillin 500mg (Batch #AMX-9921)</span>
-                <span className="text-emerald-700 font-bold">+150 PTS</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-800">Metformin 850mg (Batch #MET-4412)</span>
-                <span className="text-emerald-700 font-bold">+150 PTS</span>
+
+              <div className="border border-slate-200 bg-slate-50 p-4 rounded-lg space-y-2">
+                <div className="flex justify-between font-bold text-slate-900">
+                  <span>CDSCO Compliance Verification Audit</span>
+                  <span className="text-emerald-700">750 PTS</span>
+                </div>
+                <p className="text-slate-600">Waive administrative fees for licensed pharmacist EIP-712 batch audits.</p>
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg w-full">
+                  Redeem 750 Credits
+                </Button>
               </div>
             </div>
           </div>

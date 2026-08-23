@@ -30,6 +30,7 @@ import {
   Navigation,
   Download,
   Wifi,
+  Syringe,
 } from 'lucide-react';
 
 const GEO_FENCED_ROUTES = [
@@ -42,7 +43,7 @@ const WASTE_COLOR_CODES = [
   { code: 'YELLOW', label: 'Outdated Medicines & Cytotoxic Waste', temp: '850°C - 1100°C', action: 'High-Temperature Incineration', bg: 'bg-amber-50 border-amber-200 text-amber-900' },
   { code: 'RED', label: 'Contaminated Recyclable Packaging', temp: '121°C Autoclave', action: 'Autoclaving & Shredding', bg: 'bg-red-50 border-red-200 text-red-900' },
   { code: 'BLUE', label: 'Glassware & Vials', temp: 'Disinfection Tank', action: 'Sodium Hypochlorite Treatment', bg: 'bg-blue-50 border-blue-200 text-blue-900' },
-  { code: 'BLACK', label: 'Non-Hazardous Packaging Waste', temp: 'Ambient', action: 'Secured Sanitary Landfill Stream', bg: 'bg-slate-50 border-slate-200 text-slate-900' },
+  { code: 'SHARPS', label: 'Needles & Syringes Translucent Box', temp: 'Encapsulation', action: 'Puncture-Proof Rigid Vault Stream', bg: 'bg-slate-50 border-slate-300 text-slate-900' },
 ];
 
 export default function WasteCollectorModule() {
@@ -93,7 +94,7 @@ export default function WasteCollectorModule() {
   return (
     <div className="space-y-8 font-sans">
       <SectionHeader
-        eyebrow="Bio-Medical Waste Lifecycle"
+        eyebrow="Bio-Medical Waste Lifecycle &amp; Telemetry"
         title="Waste Collector &amp; Incineration Hub"
         description="Manage geo-fenced pickup routes, color-coded bio-medical manifests, sealed multi-party handoffs, and live 850°C incineration telemetry."
         action={
@@ -120,10 +121,10 @@ export default function WasteCollectorModule() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-200 text-xs font-sans">
+      <div className="flex border-b border-slate-200 text-xs font-sans overflow-x-auto">
         <button
           onClick={() => setActiveTabSection('manifests')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'manifests'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -133,7 +134,7 @@ export default function WasteCollectorModule() {
         </button>
         <button
           onClick={() => setActiveTabSection('routes')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'routes'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -143,7 +144,7 @@ export default function WasteCollectorModule() {
         </button>
         <button
           onClick={() => setActiveTabSection('telemetry')}
-          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'telemetry'
               ? 'border-emerald-600 text-emerald-700 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -284,10 +285,10 @@ export default function WasteCollectorModule() {
                           size="sm"
                           variant="outline"
                           onClick={() => downloadPdf(waste)}
-                          className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg text-xs"
+                          className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg text-xs font-semibold"
                         >
                           <Download className="mr-1.5 h-3.5 w-3.5 text-emerald-600" />
-                          Download Form-IV PDF
+                          Download CDSCO Form-IV PDF
                         </Button>
                         {waste.status === 'pickup_pending' && (
                           <Button
