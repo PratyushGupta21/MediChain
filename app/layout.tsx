@@ -1,10 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { AppProvider } from '@/lib/context/app-context';
 import { Toaster } from '@/components/ui/toaster';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'MediChain — FEFO Pharmaceutical Tracking & Bio-Medical Waste Lifecycle',
@@ -26,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-background text-foreground antialiased`}>
+      <body className="font-sans bg-background text-foreground antialiased">
         <AppProvider>
           {children}
           <Toaster />

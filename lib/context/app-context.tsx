@@ -51,7 +51,7 @@ interface AppContextValue {
   rejectBatch: (batchId: string) => Promise<void>;
   donateToNgo: (batchId: string) => Promise<void>;
   requestAllocation: (batchId: string, quantity: number) => Promise<void>;
-  schedulePickup: (batchId: string) => Promise<void>;
+  schedulePickup: (batchId: string, pickupAddress?: string) => Promise<void>;
   confirmDestruction: (wasteId: string) => Promise<void>;
 }
 
@@ -406,7 +406,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const approveBatch = useCallback(
     async (batchId: string): Promise<string> => {
-      const txHash = generateTxHash();
+      const med = medicines.find((m) => m.id === batchId);
+      const txHash = await generateTxHash(batchId, med?.batchNumber);
       const { error } = await supabase
         .from('medicines')
         .update({
@@ -443,7 +444,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       });
       return txHash;
     },
-    []
+    [medicines]
   );
 
   const rejectBatch = useCallback(async (batchId: string) => {
@@ -500,13 +501,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const requestAllocation = useCallback(
     async (batchId: string, quantity: number) => {
       if (!user) return;
+      const med = medicines.find((m) => m.id === batchId);
+      if (!med) return;
+
+      const remainingQty = Math.max(0, med.quantity - quantity);
+      const newDbStatus = remainingQty === 0 ? 'REQUESTED' : 'APPROVED';
 
       const { error } = await supabase
         .from('medicines')
         .update({
-          status: 'REQUESTED',
+          quantity: remainingQty,
+          status: newDbStatus,
           requested_by: user.id,
-          requested_quantity: quantity,
+          requested_quantity: (med.requestedQuantity || 0) + quantity,
         })
         .eq('id', batchId);
 
@@ -524,27 +531,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           m.id === batchId
             ? {
                 ...m,
-                status: 'requested',
+                quantity: remainingQty,
+                status: remainingQty === 0 ? 'requested' : 'approved',
                 requestedBy: user.id,
-                requestedQuantity: quantity,
+                requestedQuantity: (m.requestedQuantity || 0) + quantity,
               }
             : m
         )
       );
       toast({
         title: 'Allocation requested',
-        description: `Requested ${quantity} units.`,
+        description: `Allocated ${quantity} units. ${remainingQty} units remaining in batch.`,
       });
     },
-    [user]
+    [user, medicines]
   );
 
   const schedulePickup = useCallback(
-    async (batchId: string) => {
+    async (batchId: string, pickupAddress?: string) => {
       const med = medicines.find((m) => m.id === batchId);
       if (!med) return;
 
       const routeId = `RTE-${Math.floor(Math.random() * 900 + 100)}`;
+      const addressToUse = pickupAddress?.trim() || 'Pending confirmation from user';
 
       const { data: wasteData, error: wasteError } = await supabase
         .from('waste_manifests')
@@ -552,7 +561,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           medicine_name: `${med.brandName} (${med.genericName})`,
           batch_number: med.batchNumber,
           quantity: med.quantity,
-          pickup_address: 'Pending confirmation from user',
+          pickup_address: addressToUse,
           status: 'PICKUP_PENDING',
           route_id: routeId,
         })

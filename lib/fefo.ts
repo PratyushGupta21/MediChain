@@ -54,12 +54,29 @@ export function getFefoColorClasses(status: FefoStatus): {
   }
 }
 
-export function generateTxHash(): string {
+export async function generateTxHash(batchId?: string, batchNumber?: string): Promise<string> {
+  // Simulate realistic Web3 smart contract execution delay
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const domain = 'MediChain Ledger Protocol (EIP-712)';
+  const payload = `${domain}:${batchId || 'batch'}:${batchNumber || '0'}:${Date.now()}`;
+
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+    try {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(payload);
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hexHash = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+      return `0x${hexHash}`;
+    } catch {
+      // Fallback if subtle crypto is unavailable
+    }
+  }
+
   const chars = '0123456789abcdef';
   let hash = '0x';
-  for (let i = 0; i < 8; i++) hash += chars[Math.floor(Math.random() * 16)];
-  hash += '...';
-  for (let i = 0; i < 4; i++) hash += chars[Math.floor(Math.random() * 16)];
+  for (let i = 0; i < 64; i++) hash += chars[Math.floor(Math.random() * 16)];
   return hash;
 }
 
