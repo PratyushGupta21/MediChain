@@ -57,7 +57,7 @@ export default function WasteCollectorModule() {
 
   // Supabase Realtime Telemetry WebSocket Subscription
   useEffect(() => {
-    if (user?.role !== 'WASTE_COLLECTOR') return;
+    if (user?.role !== 'WASTE_COLLECTOR' && (user?.role as string) !== 'WASTE_OP') return;
 
     const channel = supabase
       .channel('waste_telemetry_realtime')
@@ -81,7 +81,7 @@ export default function WasteCollectorModule() {
   }, [user?.role]);
 
   // Strict Security Guard Check for Unprivileged Personas
-  if (user?.role !== 'WASTE_COLLECTOR') {
+  if (user?.role !== 'WASTE_COLLECTOR' && (user?.role as string) !== 'WASTE_OP') {
     return (
       <div className="mx-auto my-12 max-w-2xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-lg font-sans">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 border border-red-200 text-red-600 mb-5">

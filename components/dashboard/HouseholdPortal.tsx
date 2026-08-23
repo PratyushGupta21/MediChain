@@ -86,6 +86,25 @@ const REMINDER_PRESETS = [
 export default function HouseholdPortal() {
   const { user, medicines, wasteManifests, addMedicine, donateToNgo, schedulePickup, submitForVerification } =
     useApp();
+
+  // Strict Security Guard Check for Unprivileged Personas
+  if (user?.role !== 'HOUSEHOLD') {
+    return (
+      <div className="mx-auto my-12 max-w-2xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-lg font-sans">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 border border-red-200 text-red-600 mb-5">
+          <ShieldAlert className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">Access Restricted: Household Donors Only</h2>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700 font-medium">
+          This cabinet management and waste scanning hub is reserved exclusively for registered household accounts.
+        </p>
+        <div className="mt-6 border-t border-slate-100 pt-4 text-xs text-slate-500">
+          Household profile authentication required for medicine inventory tracking, donation listings, and disposal requests.
+        </div>
+      </div>
+    );
+  }
+
   const [showForm, setShowForm] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
   const [showOcrModal, setShowOcrModal] = useState(false);

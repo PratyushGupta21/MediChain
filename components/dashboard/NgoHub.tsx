@@ -33,6 +33,7 @@ import {
   Boxes,
   Filter,
   Coins,
+  ShieldAlert,
 } from 'lucide-react';
 
 const THERAPEUTIC_CLASSES = [
@@ -52,7 +53,25 @@ const PROVENANCE_STAGES = [
 ];
 
 export default function NgoHub() {
-  const { medicines, requestAllocation } = useApp();
+  const { user, medicines, requestAllocation } = useApp();
+
+  // Strict Security Guard Check for Unprivileged Personas
+  if (user?.role !== 'NGO' && (user?.role as string) !== 'RECIPIENT') {
+    return (
+      <div className="mx-auto my-12 max-w-2xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-lg font-sans">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 border border-red-200 text-red-600 mb-5">
+          <ShieldAlert className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">Access Restricted: Registered NGO Partners Only</h2>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700 font-medium">
+          Subsidized medicine sourcing and health credit redemptions are reserved exclusively for verified NGO partners.
+        </p>
+        <div className="mt-6 border-t border-slate-100 pt-4 text-xs text-slate-500">
+          FCRA / NITI Aayog Darpan NGO registration required for medicine allocation requests and clinic distribution.
+        </div>
+      </div>
+    );
+  }
   const [search, setSearch] = useState('');
   const [selectedClass, setSelectedClass] = useState('ALL CLASSES');
   const [selected, setSelected] = useState<MedicineBatch | null>(null);

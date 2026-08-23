@@ -49,7 +49,25 @@ const CDSCO_RULE96_GUARDRAILS = [
 ];
 
 export default function PharmacistHub() {
-  const { medicines, approveBatch, rejectBatch } = useApp();
+  const { user, medicines, approveBatch, rejectBatch } = useApp();
+
+  // Strict Security Guard Check for Unprivileged Personas
+  if (user?.role !== 'PHARMACIST') {
+    return (
+      <div className="mx-auto my-12 max-w-2xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-lg font-sans">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 border border-red-200 text-red-600 mb-5">
+          <ShieldAlert className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">Access Restricted: Licensed Pharmacists Only</h2>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700 font-medium">
+          CDSCO Rule 96 verification tools and Polygon EIP-712 signing are reserved exclusively for licensed pharmacists.
+        </p>
+        <div className="mt-6 border-t border-slate-100 pt-4 text-xs text-slate-500">
+          State Pharmacy Council registration &amp; CDSCO Inspector credentials required for cryptographic signature generation.
+        </div>
+      </div>
+    );
+  }
   const [busyId, setBusyId] = useState<string | null>(null);
   const [selectedBatch, setSelectedBatch] = useState<MedicineBatch | null>(null);
   const [showScanModal, setShowScanModal] = useState(false);
