@@ -11,6 +11,7 @@ import React, {
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
+import { ROLE_DISPLAY_NAMES } from '@/lib/types';
 import type {
   User,
   MedicineBatch,
@@ -37,8 +38,17 @@ interface AppContextValue {
   medicines: MedicineBatch[];
   wasteManifests: WasteManifest[];
   setAuthOpen: (open: boolean) => void;
-  signUp: (email: string, password: string, persona: Persona, fullName: string) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    persona: Persona,
+    fullName: string
+  ) => Promise<{ requiresEmailVerification?: boolean; userEmail?: string; error?: string }>;
+  signIn: (
+    email: string,
+    password: string,
+    selectedPersona: Persona
+  ) => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
   addMedicine: (med: {
     brandName: string;
@@ -277,9 +287,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = useCallback<AppContextValue['signUp']>(
     async (email, password, persona, fullName) => {
+      const cleanEmail = email.trim().toLowerCase();
+
+      // Rule 2: Strict Pre-Signup Role & Email Conflict Check
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('role, full_name, email')
+        .eq('email', cleanEmail)
+        .maybeSingle();
+
+      if (existingProfile && existingProfile.role) {
+        const existingRoleDisplay =
+          ROLE_DISPLAY_NAMES[existingProfile.role as DbRole] || existingProfile.role;
+        const conflictMsg = `An account with this email already exists as a ${existingRoleDisplay}. Please sign in using your existing account or select the correct role tab.`;
+        return { error: conflictMsg };
+      }
+
       const dbRole = personaToRole(persona);
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
         options: {
           data: {
@@ -291,21 +317,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        toast({
-          title: 'Sign up failed',
-          description: error.message,
-          variant: 'destructive',
-        });
-        return;
+        return { error: error.message };
       }
 
       if (!data.user) {
-        toast({
-          title: 'Sign up failed',
-          description: 'No user returned. Please try again.',
-          variant: 'destructive',
-        });
-        return;
+        return { error: 'No user returned from registration. Please try again.' };
       }
 
       // Upsert profile gracefully with onConflict: 'id'
@@ -314,7 +330,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         .upsert(
           {
             id: data.user.id,
-            email,
+            email: cleanEmail,
             role: dbRole,
             full_name: fullName,
           },
@@ -325,34 +341,75 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         console.warn('Profile upsert warning:', profileError.message);
       }
 
+      // Rule 1: Check if email verification is required
+      if (!data.session || !data.user.email_confirmed_at) {
+        return {
+          requiresEmailVerification: true,
+          userEmail: cleanEmail,
+        };
+      }
+
       toast({
         title: 'Account created',
         description: `Welcome to MediChain, ${fullName}!`,
       });
       setAuthOpen(false);
+      return {};
     },
     []
   );
 
   const signIn = useCallback<AppContextValue['signIn']>(
-    async (email, password) => {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+    async (email, password, selectedPersona) => {
+      const cleanEmail = email.trim().toLowerCase();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
         password,
       });
+
       if (error) {
-        toast({
-          title: 'Sign in failed',
-          description: error.message,
-          variant: 'destructive',
-        });
-        return;
+        return { success: false, error: error.message };
       }
-      toast({
-        title: 'Welcome back!',
-        description: 'Signed in successfully.',
-      });
-      setAuthOpen(false);
+
+      if (data.user) {
+        // Rule 3: Login Role Validation & Enforcement
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        const registeredRole =
+          (profile?.role as DbRole) ||
+          (data.user.user_metadata?.role as DbRole) ||
+          'HOUSEHOLD';
+        const selectedRole = personaToRole(selectedPersona);
+
+        if (registeredRole !== selectedRole) {
+          // Immediately execute sign out and revoke session access
+          await supabase.auth.signOut();
+          setUser(null);
+          setMedicines([]);
+          setWasteManifests([]);
+
+          const databaseRoleDisplay =
+            ROLE_DISPLAY_NAMES[registeredRole] || registeredRole;
+          const selectedTabRoleDisplay =
+            ROLE_DISPLAY_NAMES[selectedRole] || selectedRole;
+
+          const accessDeniedMsg = `Access Denied: This account is registered as ${databaseRoleDisplay}, but you are trying to log in under the ${selectedTabRoleDisplay} tab. Please switch to the ${databaseRoleDisplay} tab to log in.`;
+          return { success: false, error: accessDeniedMsg };
+        }
+
+        toast({
+          title: 'Welcome back!',
+          description: 'Signed in successfully.',
+        });
+        setAuthOpen(false);
+        return { success: true };
+      }
+
+      return { success: false, error: 'Sign in failed.' };
     },
     []
   );
