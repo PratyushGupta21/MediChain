@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth-modal';
+import SwissWaveCanvas from '@/components/SwissWaveCanvas';
 
 import HouseholdPortal from '@/components/dashboard/HouseholdPortal';
 import PharmacistHub from '@/components/dashboard/PharmacistHub';
@@ -110,8 +111,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans antialiased">
+    <div className="relative min-h-screen bg-white text-slate-900 font-sans antialiased">
       <AuthModal />
+      <SwissWaveCanvas />
+      
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
           <div className="flex items-center gap-4">
@@ -188,7 +191,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Workspace Navigation Bar */}
-      <div className="border-b border-slate-200 bg-slate-50/50">
+      <div className="relative z-10 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
         <div className="mx-auto max-w-[1440px] px-6 md:px-8">
           <nav className="flex space-x-1 overflow-x-auto py-2 text-xs font-sans">
             {allPortalTabs.map((tab) => {
@@ -218,7 +221,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Workspace Body */}
-      <main className="mx-auto max-w-[1440px] px-6 py-8 md:px-8">
+      <main className="relative z-10 mx-auto max-w-[1440px] px-6 py-8 md:px-8">
         {activeTab === 'household' && <HouseholdPortal />}
         {activeTab === 'pharmacist' && <PharmacistHub />}
         {activeTab === 'ngo' && <NgoHub />}
