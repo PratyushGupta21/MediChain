@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useApp } from '@/lib/context/app-context';
 import { PERSONA_PRESETS } from '@/lib/personas';
 import {
@@ -75,12 +74,12 @@ export default function AuthModal() {
         if (!open) reset();
       }}
     >
-      <DialogContent className="border border-[#22304A] bg-[#131C31] text-slate-100 shadow-2xl sm:max-w-md p-6 font-sans rounded-xl">
+      <DialogContent className="border border-slate-200 bg-white text-slate-900 shadow-2xl sm:max-w-md p-6 font-sans rounded-xl">
         <DialogHeader className="pb-2">
-          <DialogTitle className="text-center text-xl font-bold tracking-tight text-slate-100">
+          <DialogTitle className="text-center text-xl font-bold tracking-tight text-slate-900">
             {mode === 'signin' ? 'Sign In to MediChain' : 'Create Your Account'}
           </DialogTitle>
-          <DialogDescription className="text-center text-xs text-slate-400">
+          <DialogDescription className="text-center text-xs text-slate-600">
             {mode === 'signin'
               ? 'Enter your credentials to access your portal'
               : 'Choose your role and register to access the ledger'}
@@ -88,14 +87,14 @@ export default function AuthModal() {
         </DialogHeader>
 
         {/* Tab Toggle */}
-        <div className="flex bg-[#0B1120] p-1 rounded-lg border border-[#22304A] mb-4 text-xs font-medium">
+        <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 mb-4 text-xs font-medium">
           <button
             type="button"
             onClick={() => switchMode('signin')}
             className={`flex-1 py-2 text-center rounded-md transition-all ${
               mode === 'signin'
-                ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-emerald-600 text-white font-semibold shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Sign In
@@ -105,8 +104,8 @@ export default function AuthModal() {
             onClick={() => switchMode('signup')}
             className={`flex-1 py-2 text-center rounded-md transition-all ${
               mode === 'signup'
-                ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-emerald-600 text-white font-semibold shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Sign Up
@@ -118,7 +117,7 @@ export default function AuthModal() {
             <>
               {/* Persona selector */}
               <div className="space-y-2 text-xs">
-                <Label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                <Label className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">
                   Select Your Role
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
@@ -132,13 +131,13 @@ export default function AuthModal() {
                         onClick={() => setSelectedPersona(preset.persona)}
                         className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-left text-xs transition-all ${
                           active
-                            ? 'border-emerald-500 bg-emerald-600 text-white font-medium shadow-sm'
-                            : 'border-[#22304A] bg-[#0B1120] text-slate-300 hover:text-slate-100 hover:border-slate-500'
+                            ? 'border-emerald-600 bg-emerald-600 text-white font-medium shadow-sm'
+                            : 'border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:border-slate-400'
                         }`}
                       >
                         <div
                           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
-                            active ? 'bg-emerald-700 text-white' : 'bg-[#131C31] text-slate-400'
+                            active ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-600'
                           }`}
                         >
                           <Icon className="h-4 w-4" />
@@ -151,18 +150,18 @@ export default function AuthModal() {
               </div>
 
               <div className="space-y-1.5 text-xs">
-                <Label htmlFor="fullName" className="text-slate-300 font-medium">
+                <Label htmlFor="fullName" className="text-slate-700 font-medium">
                   Full Name
                 </Label>
                 <div className="relative">
-                  <UserRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                  <UserRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <Input
                     id="fullName"
                     type="text"
                     placeholder="e.g. Dr. Priya Menon"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="border-[#22304A] bg-[#0B1120] text-slate-100 focus:border-blue-500 rounded-lg pl-9 text-xs placeholder:text-slate-500"
+                    className="border-slate-300 bg-white text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 rounded-lg pl-9 text-xs placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -170,11 +169,11 @@ export default function AuthModal() {
           )}
 
           <div className="space-y-1.5 text-xs">
-            <Label htmlFor="email" className="text-slate-300 font-medium">
+            <Label htmlFor="email" className="text-slate-700 font-medium">
               Email Address
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 id="email"
                 type="email"
@@ -182,17 +181,17 @@ export default function AuthModal() {
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border-[#22304A] bg-[#0B1120] text-slate-100 focus:border-blue-500 rounded-lg pl-9 text-xs placeholder:text-slate-500"
+                className="border-slate-300 bg-white text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 rounded-lg pl-9 text-xs placeholder:text-slate-400"
               />
             </div>
           </div>
 
           <div className="space-y-1.5 text-xs">
-            <Label htmlFor="password" className="text-slate-300 font-medium">
+            <Label htmlFor="password" className="text-slate-700 font-medium">
               Password
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 id="password"
                 type="password"
@@ -200,7 +199,7 @@ export default function AuthModal() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="border-[#22304A] bg-[#0B1120] text-slate-100 focus:border-blue-500 rounded-lg pl-9 text-xs placeholder:text-slate-500"
+                className="border-slate-300 bg-white text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 rounded-lg pl-9 text-xs placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -208,7 +207,7 @@ export default function AuthModal() {
           <Button
             type="submit"
             disabled={busy}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg py-2.5 text-xs transition-colors shadow-sm mt-2"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg py-2.5 text-xs transition-colors shadow-md shadow-emerald-600/20 mt-2"
           >
             {busy ? (
               <>

@@ -39,21 +39,21 @@ import {
 const WASTE_CATEGORIES = [
   {
     category: 'HAZARDOUS BIO-MEDICAL',
-    color: 'border-red-800/50 bg-red-950/40 text-red-300',
+    color: 'border-red-200 bg-red-50 text-red-800',
     icon: ShieldAlert,
     rule: 'Expired antibiotics, cytotoxic drugs, controlled hormones.',
     action: 'Requires 850°C high-temperature incineration. Schedule Bio-Clean pickup.',
   },
   {
     category: 'LIQUID / SYRUP QUARANTINE',
-    color: 'border-amber-800/50 bg-amber-950/40 text-amber-300',
+    color: 'border-amber-200 bg-amber-50 text-amber-800',
     icon: Trash2,
     rule: 'Liquid suspensions, cough syrups, eye drops past 30 days of opening.',
     action: 'Mix with absorbent material (coffee grounds/sand) in sealed container prior to disposal.',
   },
   {
     category: 'GENERAL NON-TOXIC SOLID',
-    color: 'border-emerald-800/50 bg-emerald-950/40 text-emerald-300',
+    color: 'border-emerald-200 bg-emerald-50 text-emerald-800',
     icon: CheckCircle2,
     rule: 'Over-the-counter vitamins, minerals, antacids with >60d remaining.',
     action: 'Eligible for NGO donation or municipal safe solid waste stream.',
@@ -148,7 +148,7 @@ export default function HouseholdPortal() {
           <div className="flex gap-2 text-xs font-sans">
             <Button
               onClick={() => setShowAiModal(true)}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2 shadow-sm"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2 shadow-md shadow-emerald-600/20"
             >
               <Camera className="mr-2 h-4 w-4" />
               GS1 Camera Scan
@@ -171,13 +171,13 @@ export default function HouseholdPortal() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-[#22304A] text-xs font-sans">
+      <div className="flex border-b border-slate-200 text-xs font-sans">
         <button
           onClick={() => setActiveTabSection('inventory')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
             activeTabSection === 'inventory'
-              ? 'border-emerald-500 text-emerald-400 font-bold'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-emerald-600 text-emerald-700 font-bold'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           Medicine Inventory ({owned.length})
@@ -186,8 +186,8 @@ export default function HouseholdPortal() {
           onClick={() => setActiveTabSection('reminders')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
             activeTabSection === 'reminders'
-              ? 'border-emerald-500 text-emerald-400 font-bold'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-emerald-600 text-emerald-700 font-bold'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           Reminders Engine ({reminders.filter((r) => r.active).length})
@@ -196,8 +196,8 @@ export default function HouseholdPortal() {
           onClick={() => setActiveTabSection('waste_guide')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
             activeTabSection === 'waste_guide'
-              ? 'border-emerald-500 text-emerald-400 font-bold'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-emerald-600 text-emerald-700 font-bold'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           Smart Waste Classifier
@@ -215,15 +215,15 @@ export default function HouseholdPortal() {
 
       {/* Manual Entry Form */}
       {showForm && (
-        <div className="rounded-xl border border-[#22304A] bg-[#131C31] p-6 shadow-sm text-xs font-sans">
-          <div className="mb-5 flex items-center justify-between border-b border-[#22304A] pb-3">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm text-xs font-sans">
+          <div className="mb-5 flex items-center justify-between border-b border-slate-200 pb-3">
             <div>
-              <h2 className="font-semibold text-base text-slate-100">Log Unused Medicine Batch</h2>
-              <p className="mt-0.5 text-slate-400 text-xs font-sans">
+              <h2 className="font-bold text-base text-slate-900">Log Unused Medicine Batch</h2>
+              <p className="mt-0.5 text-slate-600 text-xs font-sans">
                 Enter packaging details to compute FEFO urgency and ledger validation.
               </p>
             </div>
-            <button onClick={() => setShowForm(false)} className="p-1 text-slate-400 hover:text-white">
+            <button onClick={() => setShowForm(false)} className="p-1 text-slate-400 hover:text-slate-900">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -234,10 +234,10 @@ export default function HouseholdPortal() {
             <Field label="Expiry Date" type="date" value={form.expiryDate} onChange={update('expiryDate')} />
             <Field label="Quantity (Units)" type="number" value={form.quantity} onChange={update('quantity')} placeholder="e.g. 10" />
             <div className="flex items-end justify-end gap-3 sm:col-span-2 pt-2 font-sans">
-              <Button type="button" variant="outline" onClick={() => setShowForm(false)} className="bg-[#0B1120] hover:bg-[#1C2845] text-slate-200 border border-[#22304A] rounded-lg">
+              <Button type="button" variant="outline" onClick={() => setShowForm(false)} className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg">
                 Cancel
               </Button>
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg px-4 py-2">
+              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2 shadow-md shadow-emerald-600/20">
                 Log Batch Entry
               </Button>
             </div>
@@ -273,33 +273,33 @@ export default function HouseholdPortal() {
 
       {/* SECTION 2: REMINDERS ENGINE */}
       {activeTabSection === 'reminders' && (
-        <div className="rounded-xl border border-[#22304A] bg-[#131C31] p-6 space-y-4 font-sans text-xs">
-          <div className="flex items-center justify-between border-b border-[#22304A] pb-3">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 space-y-4 font-sans text-xs">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div>
-              <h3 className="font-semibold text-base text-slate-100">Automated Dosage &amp; Expiration Reminders</h3>
-              <p className="text-slate-400 text-xs mt-0.5">
+              <h3 className="font-bold text-base text-slate-900">Automated Dosage &amp; Expiration Reminders</h3>
+              <p className="text-slate-600 text-xs mt-0.5">
                 Configured push notifications for daily dosage and upcoming FEFO dispatch alerts.
               </p>
             </div>
-            <Bell className="h-5 w-5 text-emerald-400" />
+            <Bell className="h-5 w-5 text-emerald-600" />
           </div>
 
           <div className="space-y-3">
             {reminders.map((r) => (
-              <div key={r.id} className="flex items-center justify-between border border-[#22304A] bg-[#0B1120] p-4 rounded-lg">
+              <div key={r.id} className="flex items-center justify-between border border-slate-200 bg-slate-50 p-4 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <Clock className="h-4 w-4 text-emerald-400" />
+                  <Clock className="h-4 w-4 text-emerald-600" />
                   <div>
-                    <p className="font-semibold text-slate-100">{r.medicine}</p>
-                    <p className="text-slate-400 text-xs">{r.time} · {r.daysLeft} days until expiry window</p>
+                    <p className="font-bold text-slate-900">{r.medicine}</p>
+                    <p className="text-slate-600 text-xs">{r.time} · {r.daysLeft} days until expiry window</p>
                   </div>
                 </div>
                 <button
                   onClick={() => toggleReminder(r.id)}
                   className={`px-3 py-1 font-semibold text-xs border rounded-full transition-colors ${
                     r.active
-                      ? 'border-emerald-800/50 bg-emerald-950/60 text-emerald-300'
-                      : 'border-[#22304A] bg-[#131C31] text-slate-400'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-800 font-semibold'
+                      : 'border-slate-300 bg-white text-slate-600'
                   }`}
                 >
                   {r.active ? 'ACTIVE ALERT' : 'MUTED'}
@@ -313,9 +313,9 @@ export default function HouseholdPortal() {
       {/* SECTION 3: SMART WASTE CLASSIFIER */}
       {activeTabSection === 'waste_guide' && (
         <div className="space-y-4 font-sans text-xs">
-          <div className="border border-[#22304A] bg-[#131C31] p-6 rounded-xl">
-            <h3 className="font-semibold text-base text-slate-100">Interactive Smart Waste Classifier</h3>
-            <p className="text-slate-300 text-xs mt-1 leading-relaxed">
+          <div className="border border-slate-200 bg-white p-6 rounded-xl">
+            <h3 className="font-bold text-base text-slate-900">Interactive Smart Waste Classifier</h3>
+            <p className="text-slate-600 text-xs mt-1 leading-relaxed">
               Standardized regulatory protocol for classifying expired or degraded pharmaceuticals prior to collection.
             </p>
           </div>
@@ -326,14 +326,14 @@ export default function HouseholdPortal() {
                 <div>
                   <div className="flex items-center gap-2 mb-3">
                     <cat.icon className="h-5 w-5 shrink-0" />
-                    <h4 className="font-semibold text-sm">{cat.category}</h4>
+                    <h4 className="font-bold text-sm">{cat.category}</h4>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed mb-3">
-                    <b className="text-white font-semibold">Scope:</b> {cat.rule}
+                  <p className="text-xs leading-relaxed mb-3">
+                    <b className="font-bold">Scope:</b> {cat.rule}
                   </p>
                 </div>
-                <div className="border-t border-[#22304A] pt-3 text-xs text-slate-200">
-                  <span className="font-semibold text-amber-400">Disposal Directive:</span>
+                <div className="border-t border-slate-200/80 pt-3 text-xs">
+                  <span className="font-bold uppercase tracking-wider text-xs">Disposal Directive:</span>
                   <p className="mt-1">{cat.action}</p>
                 </div>
               </div>
@@ -344,31 +344,31 @@ export default function HouseholdPortal() {
 
       {/* Schedule Pickup Modal */}
       {pickupTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-md rounded-xl border border-[#22304A] bg-[#131C31] p-6 shadow-2xl font-sans"
+            className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-2xl font-sans text-xs"
           >
-            <div className="flex items-start justify-between border-b border-[#22304A] pb-4 mb-4">
+            <div className="flex items-start justify-between border-b border-slate-200 pb-4 mb-4">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-700">
                   Bio-Hazard Route
                 </span>
-                <h2 className="mt-1 text-xl font-bold text-slate-100">Schedule Pickup Route</h2>
-                <p className="mt-1 text-xs text-slate-300">
+                <h2 className="mt-1 text-xl font-bold text-slate-900">Schedule Pickup Route</h2>
+                <p className="mt-1 text-xs text-slate-600">
                   Specify location for {pickupTarget.brandName} (Batch #{pickupTarget.batchNumber}).
                 </p>
               </div>
-              <button onClick={() => setPickupTarget(null)} className="p-1 text-slate-400 hover:text-white">
+              <button onClick={() => setPickupTarget(null)} className="p-1 text-slate-400 hover:text-slate-900">
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             <div className="space-y-4 text-xs font-sans">
               <label className="block space-y-1.5">
-                <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
-                  <MapPin className="h-3.5 w-3.5 text-amber-400" />
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <MapPin className="h-3.5 w-3.5 text-amber-600" />
                   Pickup Address
                 </span>
                 <textarea
@@ -376,25 +376,25 @@ export default function HouseholdPortal() {
                   value={pickupAddressInput}
                   onChange={(e) => setPickupAddressInput(e.target.value)}
                   placeholder="e.g. Flat 402, Green Valley Apartments, MG Road, Bengaluru - 560001"
-                  className="w-full rounded-lg border border-[#22304A] bg-[#0B1120] p-3 text-xs text-slate-100 outline-none focus:border-blue-500 font-sans"
+                  className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
                 />
               </label>
 
-              <div className="border border-[#22304A] bg-[#0B1120] p-3 text-xs text-slate-300 rounded-lg">
+              <div className="border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700 rounded-lg">
                 <p>
-                  <b className="text-amber-400 font-semibold">Note:</b> Bio-Clean Disposals will assign a sealed container transport route to collect this hazardous batch.
+                  <b className="text-amber-700 font-semibold">Note:</b> Bio-Clean Disposals will assign a sealed container transport route to collect this hazardous batch.
                 </p>
               </div>
             </div>
 
             <div className="mt-6 flex justify-end gap-3 text-xs font-sans">
-              <Button variant="outline" onClick={() => setPickupTarget(null)} className="bg-[#0B1120] hover:bg-[#1C2845] text-slate-200 border border-[#22304A] rounded-lg">
+              <Button variant="outline" onClick={() => setPickupTarget(null)} className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg">
                 Cancel
               </Button>
               <Button
                 onClick={confirmPickupSchedule}
                 disabled={busyId === pickupTarget.id || !pickupAddressInput.trim()}
-                className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg px-4 py-2"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2 shadow-md shadow-emerald-600/20"
               >
                 {busyId === pickupTarget.id ? (
                   <>

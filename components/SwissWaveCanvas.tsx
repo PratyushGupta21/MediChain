@@ -29,8 +29,8 @@ export default function SwissWaveCanvas() {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Swiss Minimalist Grid Lines
-      ctx.strokeStyle = 'rgba(160, 160, 160, 0.08)';
+      // High-Contrast Light Mode Grid Lines (Dark Charcoal / Black lines)
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.06)';
       ctx.lineWidth = 1;
       const gridSize = 64;
       for (let x = 0; x < width; x += gridSize) {
@@ -46,15 +46,15 @@ export default function SwissWaveCanvas() {
         ctx.stroke();
       }
 
-      // Minimalist 3D Parametric Ribbon / Wave Curvature Lines
+      // High-Precision Black Contour Line Art Ribbon
       const ribbons = 12;
       const points = 100;
 
       for (let r = 0; r < ribbons; r++) {
         ctx.beginPath();
         const rOffset = (r / ribbons) * Math.PI * 2;
-        const opacity = 0.05 + (1 - r / ribbons) * 0.12;
-        ctx.strokeStyle = `rgba(180, 180, 170, ${opacity})`;
+        const opacity = 0.04 + (1 - r / ribbons) * 0.10;
+        ctx.strokeStyle = `rgba(15, 23, 42, ${opacity})`;
         ctx.lineWidth = 1.2;
 
         for (let i = 0; i <= points; i++) {

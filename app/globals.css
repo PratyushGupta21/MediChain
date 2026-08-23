@@ -4,43 +4,32 @@
 
 @layer base {
   :root {
-    /* Clinical Slate & Emerald Color System */
-    --background: 222 47% 8%;          /* Grounded Navy Slate #0B1120 */
-    --foreground: 210 40% 98%;         /* Crisp Off-White #F8FAFC */
-    --card: 222 44% 13%;               /* Elevated Slate #131C31 */
-    --card-foreground: 210 40% 98%;
-    --popover: 222 44% 13%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;            /* Royal Blue #2563EB */
+    /* High-Contrast Light Mode & Emerald Design Tokens */
+    --background: 0 0% 100%;           /* Pure White #FFFFFF */
+    --foreground: 222 47% 11%;         /* Crisp Dark Slate #0F172A */
+    --card: 0 0% 100%;                 /* Pure White #FFFFFF */
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 160 84% 39%;            /* Vibrant Emerald Green #10B981 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 37% 21%;          /* Subdued Slate #22304A */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 220 37% 21%;
-    --muted-foreground: 215 16% 70%;
-    --accent: 160 84% 39%;             /* Clinical Emerald #10B981 */
+    --secondary: 210 40% 96.1%;        /* Soft Slate #F1F5F9 */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 160 84% 39%;             /* Emerald Green #10B981 */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;          /* Crimson #DC2626 */
     --destructive-foreground: 0 0% 100%;
-    --border: 220 37% 21%;             /* Structural Border #22304A */
-    --input: 220 37% 21%;
-    --ring: 217 91% 60%;
+    --border: 214.3 31.8% 91.4%;       /* Crisp Border #E2E8F0 */
+    --input: 214.3 31.8% 91.4%;
+    --ring: 160 84% 39%;
     --radius: 0.75rem;                 /* rounded-xl */
 
     /* Status Accent Tokens */
-    --safe: 160 84% 39%;               /* Clinical Emerald #10B981 */
+    --safe: 160 84% 39%;               /* Vibrant Emerald #10B981 */
     --warning: 38 92% 50%;             /* Amber #D97706 */
     --hazard: 0 84% 60%;               /* Crimson #DC2626 */
-  }
-
-  .dark {
-    --background: 222 47% 8%;          /* #0B1120 */
-    --foreground: 210 40% 98%;         /* #F8FAFC */
-    --card: 222 44% 13%;               /* #131C31 */
-    --card-foreground: 210 40% 98%;
-    --popover: 222 44% 13%;
-    --popover-foreground: 210 40% 98%;
-    --border: 220 37% 21%;             /* #22304A */
-    --input: 220 37% 21%;
   }
 }
 
@@ -49,7 +38,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#0B1120] text-[#F8FAFC] font-sans antialiased;
+    @apply bg-white text-slate-900 font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
     letter-spacing: -0.01em;
   }
@@ -58,18 +47,18 @@
   }
 }
 
-/* Custom scrollbar for Clinical Slate design */
+/* Custom scrollbar for Light Mode design */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0B1120;
+  background: #F8FAFC;
 }
 ::-webkit-scrollbar-thumb {
-  background: #22304A;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94A3B8;
 }

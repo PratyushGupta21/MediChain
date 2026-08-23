@@ -47,13 +47,13 @@ export function Field({
 }) {
   return (
     <label className="block space-y-1.5 text-xs font-sans">
-      <span className="text-[11px] font-medium text-slate-300 uppercase tracking-wider">{label}</span>
+      <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">{label}</span>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-[#22304A] bg-[#0B1120] px-3.5 py-2.5 text-xs text-slate-100 outline-none transition focus:border-blue-500 placeholder:text-slate-500 font-sans"
+        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 placeholder:text-slate-400 font-sans"
       />
     </label>
   );
@@ -71,13 +71,13 @@ export function SectionHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-8 flex flex-col justify-between gap-4 border-b border-[#22304A] pb-6 sm:flex-row sm:items-end font-sans">
+    <div className="mb-8 flex flex-col justify-between gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end font-sans">
       <div>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-emerald-500">
+        <p className="mb-1 text-xs font-bold uppercase tracking-wider text-emerald-600">
           {eyebrow}
         </p>
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-slate-100">{title}</h1>
-        <p className="mt-1 text-sm text-slate-300 font-sans">{description}</p>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-slate-900">{title}</h1>
+        <p className="mt-1 text-sm text-slate-600 font-sans">{description}</p>
       </div>
       {action}
     </div>
@@ -87,18 +87,18 @@ export function SectionHeader({
 export function StatusBadge({ status }: { status: string }) {
   const config =
     status === 'approved' || status === 'incinerated'
-      ? ['bg-emerald-950/60 text-emerald-300 border-emerald-800/50', statusLabels[status] ?? 'Approved']
+      ? ['bg-emerald-50 text-emerald-700 border-emerald-200', statusLabels[status] ?? 'Approved']
       : status === 'rejected' || status === 'disposed'
-        ? ['bg-red-950/60 text-red-300 border-red-800/50', statusLabels[status] ?? 'Rejected']
+        ? ['bg-red-50 text-red-700 border-red-200', statusLabels[status] ?? 'Rejected']
         : status === 'pickup_scheduled' || status === 'requested'
-          ? ['bg-amber-950/60 text-amber-300 border-amber-800/50', statusLabels[status] ?? status]
+          ? ['bg-amber-50 text-amber-700 border-amber-200', statusLabels[status] ?? status]
           : [
-              'bg-[#0B1120] text-slate-300 border-[#22304A]',
+              'bg-slate-100 text-slate-700 border-slate-200',
               statusLabels[status] ?? status,
             ];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${config[0]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${config[0]}`}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-current" />
       {config[1]}
@@ -119,18 +119,18 @@ export function StatCard({
 }) {
   const color =
     tone === 'safe'
-      ? 'text-emerald-400 border-emerald-800/50 bg-emerald-950/40'
+      ? 'text-emerald-700 border-emerald-200 bg-emerald-50'
       : tone === 'warning'
-        ? 'text-amber-400 border-amber-800/50 bg-amber-950/40'
+        ? 'text-amber-700 border-amber-200 bg-amber-50'
         : tone === 'hazard'
-          ? 'text-red-400 border-red-800/50 bg-red-950/40'
-          : 'text-blue-400 border-blue-800/50 bg-blue-950/40';
+          ? 'text-red-700 border-red-200 bg-red-50'
+          : 'text-blue-700 border-blue-200 bg-blue-50';
   return (
-    <div className="rounded-xl border border-[#22304A] bg-[#131C31] p-6 shadow-sm font-sans">
+    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm font-sans">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{label}</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-100">{value}</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
         </div>
         <div className={`flex h-10 w-10 items-center justify-center rounded-lg border ${color}`}>
           <Icon className="h-5 w-5" />
@@ -150,10 +150,10 @@ export function EmptyState({
   description: string;
 }) {
   return (
-    <div className="mt-6 rounded-xl border border-dashed border-[#22304A] bg-[#131C31] p-12 text-center font-sans">
+    <div className="mt-6 rounded-xl border border-dashed border-slate-300 bg-white p-12 text-center font-sans">
       <Icon className="mx-auto h-8 w-8 text-slate-400" />
-      <h3 className="mt-4 font-semibold text-slate-100 text-base">{title}</h3>
-      <p className="mt-1 text-xs text-slate-400">{description}</p>
+      <h3 className="mt-4 font-bold text-slate-900 text-base">{title}</h3>
+      <p className="mt-1 text-xs text-slate-600">{description}</p>
     </div>
   );
 }
@@ -178,40 +178,40 @@ export function MedicineCard({
   return (
     <motion.div
       layout
-      className="rounded-xl border border-[#22304A] bg-[#131C31] p-5 shadow-sm font-sans flex flex-col justify-between"
+      className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm font-sans flex flex-col justify-between"
     >
       <div>
         <div className="mb-3 flex items-start justify-between">
           <div>
-            <h3 className="font-semibold text-base text-slate-100">{medicine.brandName}</h3>
-            <p className="mt-0.5 text-xs text-slate-400">{medicine.genericName}</p>
+            <h3 className="font-bold text-base text-slate-900">{medicine.brandName}</h3>
+            <p className="mt-0.5 text-xs text-slate-600">{medicine.genericName}</p>
           </div>
           <StatusBadge status={medicine.status} />
         </div>
 
-        <div className="mb-4 rounded-lg border border-[#22304A] bg-[#0B1120] p-3 text-xs space-y-1 font-sans">
-          <div className="flex justify-between text-[11px] text-slate-400 uppercase font-medium">
+        <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs space-y-1 font-sans">
+          <div className="flex justify-between text-[11px] text-slate-600 uppercase font-semibold">
             <span>FEFO Expiry Window</span>
-            <span className={days > 60 ? 'text-emerald-400 font-semibold' : days >= 30 ? 'text-amber-400 font-semibold' : 'text-red-400 font-semibold'}>
+            <span className={days > 60 ? 'text-emerald-700 font-bold' : days >= 30 ? 'text-amber-700 font-bold' : 'text-red-700 font-bold'}>
               {days < 0 ? 'EXPIRED' : `${days} DAYS REMAINING`}
             </span>
           </div>
-          <p className="text-slate-200 font-mono text-xs">Batch: <span className="font-semibold">{medicine.batchNumber}</span></p>
+          <p className="text-slate-800 font-mono text-xs">Batch: <span className="font-bold">{medicine.batchNumber}</span></p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-sans">
+        <div className="grid grid-cols-2 gap-2 text-xs text-slate-700 font-sans">
           <div>
-            <span className="text-slate-400 uppercase text-[10px] font-medium">Quantity</span>
-            <p className="font-semibold text-slate-100">{medicine.quantity} units</p>
+            <span className="text-slate-500 uppercase text-[10px] font-medium">Quantity</span>
+            <p className="font-bold text-slate-900">{medicine.quantity} units</p>
           </div>
           <div>
-            <span className="text-slate-400 uppercase text-[10px] font-medium">Expires</span>
-            <p className="text-slate-200">{formatDate(medicine.expiryDate)}</p>
+            <span className="text-slate-500 uppercase text-[10px] font-medium">Expires</span>
+            <p className="text-slate-800 font-semibold">{formatDate(medicine.expiryDate)}</p>
           </div>
         </div>
       </div>
 
-      <div className="mt-5 flex gap-2 border-t border-[#22304A] pt-4 font-sans text-xs">
+      <div className="mt-5 flex gap-2 border-t border-slate-200 pt-4 font-sans text-xs">
         {medicine.status === 'logged' && (
           <Button
             size="sm"
@@ -228,7 +228,7 @@ export function MedicineCard({
             size="sm"
             onClick={onDonate}
             disabled={busy}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg py-2 transition-colors shadow-sm"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg py-2 transition-colors shadow-md shadow-emerald-600/20"
           >
             {busy ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <HeartHandshake className="h-4 w-4 mr-1.5" />}
             Donate to NGO
@@ -239,9 +239,9 @@ export function MedicineCard({
             size="sm"
             onClick={onPickup}
             disabled={busy}
-            className="w-full bg-[#0B1120] hover:bg-[#1C2845] text-slate-200 border border-[#22304A] rounded-lg py-2 transition-colors"
+            className="w-full bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg py-2 transition-colors"
           >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Truck className="h-4 w-4 mr-1.5 text-amber-400" />}
+            {busy ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Truck className="h-4 w-4 mr-1.5 text-amber-600" />}
             Schedule Bio-Clean Pickup
           </Button>
         )}
