@@ -4,47 +4,58 @@
 
 @layer base {
   :root {
-    /* MediChain palette - dark charcoal theme */
-    --background: 30 3% 18%;
-    --foreground: 40 30% 85%;
-    --card: 30 3% 20%;
-    --card-foreground: 40 30% 85%;
-    --popover: 30 3% 19%;
-    --popover-foreground: 40 30% 85%;
-    --primary: 32 38% 61%;
-    --primary-foreground: 30 3% 12%;
-    --secondary: 30 3% 25%;
-    --secondary-foreground: 40 30% 85%;
-    --muted: 30 3% 24%;
-    --muted-foreground: 35 15% 60%;
-    --accent: 32 38% 61%;
-    --accent-foreground: 30 3% 12%;
-    --destructive: 350 100% 22%;
-    --destructive-foreground: 40 30% 95%;
-    --border: 32 20% 32%;
-    --input: 30 3% 24%;
-    --ring: 32 38% 61%;
-    --radius: 0.625rem;
+    /* Swiss Tech Aesthetic Color Palette */
+    --background: 220 18% 6%;         /* Slate Charcoal #0D0F12 */
+    --foreground: 210 40% 98%;        /* Crisp Off-White #F8FAFC */
+    --card: 222 18% 13%;              /* Elevated Charcoal #1B1E26 */
+    --card-foreground: 210 40% 98%;
+    --popover: 222 18% 13%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 38 92% 50%;            /* Premium Amber #F59E0B */
+    --primary-foreground: 222 47% 11%;
+    --secondary: 215 25% 18%;         /* Slate Gray #1E293B */
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 25% 18%;
+    --muted-foreground: 215 16% 70%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;         /* Crimson Red #EF4444 */
+    --destructive-foreground: 0 0% 98%;
+    --border: 215 20% 28%;            /* hairline border #334155 */
+    --input: 215 20% 28%;
+    --ring: 38 92% 50%;
+    --radius: 0.125rem;
 
-    /* MediChain semantic colors */
-    --safe: 82 24% 20%;
-    --safe-foreground: 82 30% 80%;
-    --warning: 16 64% 34%;
-    --warning-foreground: 20 40% 92%;
-    --hazard: 350 100% 22%;
-    --hazard-foreground: 0 60% 92%;
-    --gold: 32 38% 61%;
-    --charcoal: 30 3% 18%;
+    /* Status Accent Tokens */
+    --gold: 38 92% 50%;               /* Premium Amber #F59E0B */
+    --safe: 160 84% 39%;              /* Emerald Green #10B981 */
+    --safe-foreground: 160 84% 95%;
+    --warning: 38 92% 50%;            /* Amber #F59E0B */
+    --warning-foreground: 38 92% 95%;
+    --hazard: 0 84% 60%;              /* Crimson Red #EF4444 */
+    --hazard-foreground: 0 84% 95%;
+  }
+
+  .dark {
+    --background: 220 18% 6%;         /* Slate Charcoal #0D0F12 */
+    --foreground: 210 40% 98%;        /* Crisp Off-White #F8FAFC */
+    --card: 222 18% 13%;              /* Elevated Charcoal #1B1E26 */
+    --card-foreground: 210 40% 98%;
+    --popover: 222 18% 13%;
+    --popover-foreground: 210 40% 98%;
+    --border: 215 20% 28%;
+    --input: 215 20% 28%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border rounded-sm;
   }
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-[#0D0F12] text-[#F8FAFC] font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    letter-spacing: -0.01em;
   }
   html {
     scroll-behavior: smooth;
@@ -52,89 +63,34 @@
 }
 
 @layer utilities {
-  .text-safe { color: hsl(var(--safe-foreground)); }
-  .text-warning { color: hsl(var(--warning-foreground)); }
-  .text-hazard { color: hsl(var(--hazard-foreground)); }
-  .text-gold { color: hsl(var(--gold)); }
+  .text-safe { color: #10B981; }
+  .text-warning { color: #F59E0B; }
+  .text-hazard { color: #EF4444; }
+  .text-gold { color: #F59E0B; }
 
-  .bg-safe { background-color: hsl(var(--safe)); }
-  .bg-warning { background-color: hsl(var(--warning)); }
-  .bg-hazard { background-color: hsl(var(--hazard)); }
-  .bg-gold { background-color: hsl(var(--gold)); }
+  .bg-safe { background-color: #10B981; }
+  .bg-warning { background-color: #F59E0B; }
+  .bg-hazard { background-color: #EF4444; }
+  .bg-gold { background-color: #F59E0B; }
 
-  .border-safe { border-color: hsl(var(--safe)); }
-  .border-warning { border-color: hsl(var(--warning)); }
-  .border-hazard { border-color: hsl(var(--hazard)); }
-  .border-gold { border-color: hsl(var(--gold)); }
+  .border-safe { border-color: #10B981; }
+  .border-warning { border-color: #F59E0B; }
+  .border-hazard { border-color: #EF4444; }
+  .border-gold { border-color: #F59E0B; }
 
-  .glass {
-    background: hsl(30 3% 20% / 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+  /* Swiss Tech Grid 1px hairline border grid tile */
+  .swiss-grid-tile {
+    @apply border border-slate-700/60 bg-[#1B1E26] p-6 relative transition-colors hover:border-slate-500;
+  }
+  .swiss-grid-container {
+    @apply grid gap-px bg-slate-700/60 border border-slate-700/60;
   }
 
-  .glass-dark {
-    background: hsl(30 3% 15% / 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+  /* Crisp Swiss typography utilities */
+  .swiss-display {
+    @apply font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-none uppercase text-[#F8FAFC];
   }
-
-  .grid-bg {
-    background-image:
-      linear-gradient(hsl(32 20% 32% / 0.15) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(32 20% 32% / 0.15) 1px, transparent 1px);
-    background-size: 48px 48px;
+  .swiss-tag {
+    @apply text-xs font-mono uppercase tracking-[0.2em] text-slate-400 font-semibold;
   }
-
-  .glow-gold {
-    box-shadow: 0 0 24px hsl(32 38% 61% / 0.25);
-  }
-
-  .glow-safe {
-    box-shadow: 0 0 24px hsl(82 24% 40% / 0.25);
-  }
-
-  .glow-warning {
-    box-shadow: 0 0 24px hsl(16 64% 44% / 0.3);
-  }
-
-  .glow-hazard {
-    box-shadow: 0 0 24px hsl(350 100% 30% / 0.3);
-  }
-
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(32 20% 32%) transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(32 20% 32%);
-    border-radius: 3px;
-  }
-}
-
-@keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 hsl(32 38% 61% / 0.4); }
-  70% { box-shadow: 0 0 0 10px hsl(32 38% 61% / 0); }
-  100% { box-shadow: 0 0 0 0 hsl(32 38% 61% / 0); }
-}
-.animate-pulse-ring { animation: pulse-ring 2s infinite; }
-
-@keyframes float-up {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-.animate-float { animation: float-up 4s ease-in-out infinite; }
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, hsl(32 38% 61% / 0.1), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
 }

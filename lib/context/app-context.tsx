@@ -16,6 +16,7 @@ import type {
   MedicineBatch,
   WasteManifest,
   Persona,
+  DbRole,
   MedicineRow,
   WasteRow,
   ProfileRow,
@@ -141,29 +142,54 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   async function loadUserFromSession(session: Session) {
     const authUser = session.user;
+    let profileRow: ProfileRow | null = null;
+
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', authUser.id)
       .maybeSingle();
 
-    if (error) {
-      toast({
-        title: 'Profile load failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-      return;
+    if (!error && profile) {
+      profileRow = profile as ProfileRow;
+    } else {
+      // Fallback: extract metadata from user_metadata or default persona
+      const metaRole = (authUser.user_metadata?.role as DbRole) || 'HOUSEHOLD';
+      const metaName = (authUser.user_metadata?.full_name as string) || authUser.email || 'User';
+
+      // Attempt background upsert so profile exists in DB
+      const { data: upsertedProfile } = await supabase
+        .from('profiles')
+        .upsert(
+          {
+            id: authUser.id,
+            email: authUser.email || '',
+            role: metaRole,
+            full_name: metaName,
+          },
+          { onConflict: 'id' }
+        )
+        .select()
+        .maybeSingle();
+
+      if (upsertedProfile) {
+        profileRow = upsertedProfile as ProfileRow;
+      } else {
+        profileRow = {
+          id: authUser.id,
+          full_name: metaName,
+          role: metaRole,
+          created_at: new Date().toISOString(),
+        };
+      }
     }
 
-    if (!profile) return;
-
-    const profileRow = profile as ProfileRow;
     const persona = roleToPersona(profileRow.role);
     const preset = PERSONA_PRESETS.find((p) => p.persona === persona);
     const appUser: User = {
       id: authUser.id,
       persona,
+      role: profileRow.role,
       name: profileRow.full_name || authUser.email || 'User',
       email: authUser.email || '',
       walletAddress:
@@ -251,7 +277,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = useCallback<AppContextValue['signUp']>(
     async (email, password, persona, fullName) => {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const dbRole = personaToRole(persona);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            role: dbRole,
+            persona: persona,
+          },
+        },
+      });
+
       if (error) {
         toast({
           title: 'Sign up failed',
@@ -270,22 +308,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      // Upsert profile gracefully with onConflict: 'id'
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert({
-          id: data.user.id,
-          email,
-          role: personaToRole(persona),
-          full_name: fullName,
-        });
+        .upsert(
+          {
+            id: data.user.id,
+            email,
+            role: dbRole,
+            full_name: fullName,
+          },
+          { onConflict: 'id' }
+        );
 
       if (profileError) {
-        toast({
-          title: 'Profile creation failed',
-          description: profileError.message,
-          variant: 'destructive',
-        });
-        return;
+        console.warn('Profile upsert warning:', profileError.message);
       }
 
       toast({

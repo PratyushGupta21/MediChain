@@ -82,27 +82,27 @@ export default function AuthModal() {
         if (!open) reset();
       }}
     >
-      <DialogContent className="border-border bg-card/95 backdrop-blur-xl sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-center text-xl font-bold text-gold">
+      <DialogContent className="border border-slate-700/80 bg-[#14171D] text-slate-100 shadow-2xl sm:max-w-md p-6 font-sans">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-center text-xl font-bold uppercase tracking-tight text-slate-100">
             {mode === 'signin' ? 'Sign In to MediChain' : 'Create Your Account'}
           </DialogTitle>
-          <DialogDescription className="text-center text-muted-foreground">
+          <DialogDescription className="text-center font-mono text-xs text-slate-400">
             {mode === 'signin'
-              ? 'Enter your credentials to access your dashboard'
+              ? 'Enter your credentials to access your workspace'
               : 'Choose your role and create an account to get started'}
           </DialogDescription>
         </DialogHeader>
 
-        {/* Mode toggle */}
-        <div className="flex rounded-lg border border-border bg-secondary/50 p-1">
+        {/* High-Contrast Tab Toggle */}
+        <div className="flex border-b border-slate-700/80 mb-4 font-mono text-xs">
           <button
             type="button"
             onClick={() => switchMode('signin')}
-            className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 py-2.5 text-center font-semibold transition-all ${
               mode === 'signin'
-                ? 'bg-gold text-charcoal'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'border-b-2 border-amber-500 text-amber-400 font-bold'
+                : 'border-b-2 border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             Sign In
@@ -110,10 +110,10 @@ export default function AuthModal() {
           <button
             type="button"
             onClick={() => switchMode('signup')}
-            className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 py-2.5 text-center font-semibold transition-all ${
               mode === 'signup'
-                ? 'bg-gold text-charcoal'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'border-b-2 border-amber-500 text-amber-400 font-bold'
+                : 'border-b-2 border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             Sign Up
@@ -124,8 +124,8 @@ export default function AuthModal() {
           {mode === 'signup' && (
             <>
               {/* Persona selector */}
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-muted-foreground">
+              <div className="space-y-2 font-mono text-xs">
+                <Label className="text-[10px] font-bold uppercase text-slate-400">
                   Select your role
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
@@ -138,17 +138,17 @@ export default function AuthModal() {
                         type="button"
                         whileTap={{ scale: 0.97 }}
                         onClick={() => setSelectedPersona(preset.persona)}
-                        className={`flex items-center gap-2 rounded-lg border p-2.5 text-left text-xs transition-colors ${
+                        className={`flex items-center gap-2 rounded-sm border p-2.5 text-left text-xs transition-colors ${
                           active
-                            ? 'border-gold bg-gold/15'
-                            : 'border-border bg-secondary/40 hover:border-gold/50'
+                            ? 'border-amber-500 bg-amber-500/10 text-amber-300 font-bold'
+                            : 'border-slate-700 bg-slate-800/60 text-slate-300 hover:border-slate-500'
                         }`}
                       >
                         <div
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
+                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm"
                           style={{
-                            backgroundColor: `${preset.avatarColor}30`,
-                            border: `1px solid ${preset.avatarColor}`,
+                            backgroundColor: `${preset.avatarColor}25`,
+                            border: `1px solid ${preset.avatarColor}60`,
                           }}
                         >
                           <Icon
@@ -157,8 +157,8 @@ export default function AuthModal() {
                           />
                         </div>
                         <span
-                          className={`font-medium ${
-                            active ? 'text-gold' : 'text-foreground'
+                          className={`font-semibold ${
+                            active ? 'text-amber-400' : 'text-slate-200'
                           }`}
                         >
                           {preset.persona === 'household'
@@ -173,25 +173,25 @@ export default function AuthModal() {
                     );
                   })}
                 </div>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-[11px] text-slate-400 font-mono">
                   {PERSONA_DESCRIPTIONS[selectedPersona]}
                 </p>
               </div>
 
               {/* Full name */}
-              <div className="space-y-1.5">
-                <Label htmlFor="fullName" className="text-xs font-medium text-muted-foreground">
+              <div className="space-y-1.5 font-mono text-xs">
+                <Label htmlFor="fullName" className="text-[10px] font-bold uppercase text-slate-400">
                   Full name
                 </Label>
                 <div className="relative">
-                  <UserRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <UserRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <Input
                     id="fullName"
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Aarav Sharma"
-                    className="pl-10"
+                    className="pl-10 bg-slate-900/80 border border-slate-700 focus:border-amber-500 text-slate-100 placeholder-slate-500 font-mono text-xs rounded-sm"
                   />
                 </div>
               </div>
@@ -199,48 +199,49 @@ export default function AuthModal() {
           )}
 
           {/* Email */}
-          <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+          <div className="space-y-1.5 font-mono text-xs">
+            <Label htmlFor="email" className="text-[10px] font-bold uppercase text-slate-400">
               Email
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="pl-10"
+                className="pl-10 bg-slate-900/80 border border-slate-700 focus:border-amber-500 text-slate-100 placeholder-slate-500 font-mono text-xs rounded-sm"
                 required
               />
             </div>
           </div>
 
           {/* Password */}
-          <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">
+          <div className="space-y-1.5 font-mono text-xs">
+            <Label htmlFor="password" className="text-[10px] font-bold uppercase text-slate-400">
               Password
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minimum 6 characters"
-                className="pl-10"
+                className="pl-10 bg-slate-900/80 border border-slate-700 focus:border-amber-500 text-slate-100 placeholder-slate-500 font-mono text-xs rounded-sm"
                 minLength={6}
                 required
               />
             </div>
           </div>
 
+          {/* Styled High-Contrast Sign In Button */}
           <Button
             type="submit"
             disabled={busy}
-            className="w-full bg-gold text-charcoal hover:bg-gold/90"
+            className="w-full bg-amber-500 text-slate-950 font-mono font-bold hover:bg-amber-400 py-3 rounded-sm transition-all shadow-md"
           >
             {busy ? (
               <>
@@ -255,15 +256,15 @@ export default function AuthModal() {
           </Button>
         </form>
 
-        <div className="mt-2 rounded-lg border border-border bg-secondary/30 p-3">
-          <p className="text-xs text-muted-foreground text-center">
+        <div className="mt-2 rounded-sm border border-slate-700/80 bg-slate-900/50 p-3 font-mono text-xs">
+          <p className="text-slate-400 text-center">
             {mode === 'signin'
               ? "Don't have an account? "
               : 'Already have an account? '}
             <button
               type="button"
               onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}
-              className="font-medium text-gold hover:underline"
+              className="font-bold text-amber-400 hover:underline"
             >
               {mode === 'signin' ? 'Sign up' : 'Sign in'}
             </button>

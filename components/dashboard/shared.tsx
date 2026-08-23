@@ -46,14 +46,14 @@ export function Field({
   placeholder?: string;
 }) {
   return (
-    <label className="block space-y-1.5">
-      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+    <label className="block space-y-1.5 font-mono text-xs">
+      <span className="text-[10px] uppercase font-bold text-slate-300">{label}</span>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-border bg-secondary/60 px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-gold"
+        className="w-full rounded-sm border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 text-xs text-[#F8FAFC] outline-none transition focus:border-amber-500 font-sans"
       />
     </label>
   );
@@ -71,13 +71,13 @@ export function SectionHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+    <div className="mb-8 flex flex-col justify-between gap-4 border-b border-slate-700/60 pb-6 sm:flex-row sm:items-end">
       <div>
-        <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-gold">
-          {eyebrow}
+        <p className="mb-1 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-amber-400">
+          [{eyebrow}]
         </p>
-        <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        <h1 className="text-3xl font-extrabold uppercase tracking-tight text-[#F8FAFC]">{title}</h1>
+        <p className="mt-1 text-xs font-mono text-slate-300">{description}</p>
       </div>
       {action}
     </div>
@@ -87,20 +87,21 @@ export function SectionHeader({
 export function StatusBadge({ status }: { status: string }) {
   const config =
     status === 'approved' || status === 'incinerated'
-      ? ['bg-safe', 'text-safe-foreground', statusLabels[status] ?? 'Approved']
-      : status === 'rejected'
-        ? ['bg-hazard', 'text-hazard-foreground', 'Rejected']
-        : [
-            'bg-warning',
-            'text-warning-foreground',
-            statusLabels[status] ?? status,
-          ];
+      ? ['border-emerald-500/50 bg-emerald-950/60 text-emerald-300', statusLabels[status] ?? 'Approved']
+      : status === 'rejected' || status === 'disposed'
+        ? ['border-red-500/50 bg-red-950/60 text-red-300', statusLabels[status] ?? 'Rejected']
+        : status === 'pickup_scheduled' || status === 'requested'
+          ? ['border-amber-500/60 bg-amber-950/60 text-amber-300', statusLabels[status] ?? status]
+          : [
+              'border-slate-600 bg-slate-800 text-slate-200',
+              statusLabels[status] ?? status,
+            ];
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold ${config[0]} ${config[1]}`}
+      className={`inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase ${config[0]}`}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-current" />
-      {config[2]}
+      {config[1]}
     </span>
   );
 }
@@ -114,23 +115,25 @@ export function StatCard({
   label: string;
   value: number;
   icon: typeof Package;
-  tone?: 'gold' | 'safe' | 'warning';
+  tone?: 'gold' | 'safe' | 'warning' | 'hazard';
 }) {
   const color =
     tone === 'safe'
-      ? 'text-safe-foreground bg-safe'
+      ? 'text-emerald-300 border-emerald-500/40 bg-emerald-950/40'
       : tone === 'warning'
-        ? 'text-warning-foreground bg-warning'
-        : 'text-gold bg-gold/15';
+        ? 'text-amber-300 border-amber-500/40 bg-amber-950/40'
+        : tone === 'hazard'
+          ? 'text-red-300 border-red-500/40 bg-red-950/40'
+          : 'text-slate-100 border-slate-700 bg-slate-800/80';
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-sm border border-slate-700/60 bg-[#1B1E26] p-5 shadow-lg">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
+          <p className="text-[10px] font-mono uppercase text-slate-400 font-bold">{label}</p>
+          <p className="mt-2 text-3xl font-extrabold font-mono tracking-tight text-[#F8FAFC]">{value}</p>
         </div>
-        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${color}`}>
-          <Icon className="h-4 w-4" />
+        <div className={`flex h-10 w-10 items-center justify-center rounded-sm border ${color}`}>
+          <Icon className="h-5 w-5" />
         </div>
       </div>
     </div>
@@ -147,10 +150,10 @@ export function EmptyState({
   description: string;
 }) {
   return (
-    <div className="mt-6 rounded-xl border border-dashed border-border bg-card/50 p-12 text-center">
-      <Icon className="mx-auto h-8 w-8 text-muted-foreground" />
-      <h3 className="mt-4 font-semibold text-foreground">{title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+    <div className="mt-6 rounded-sm border border-dashed border-slate-700/60 bg-[#1B1E26] p-12 text-center">
+      <Icon className="mx-auto h-8 w-8 text-slate-400" />
+      <h3 className="mt-4 font-bold uppercase text-[#F8FAFC]">{title}</h3>
+      <p className="mt-1 text-xs font-mono text-slate-300">{description}</p>
     </div>
   );
 }
@@ -169,68 +172,67 @@ export function MedicineCard({
   busy?: boolean;
 }) {
   const fefo = getFefoStatus(medicine.expiryDate);
-  const colors = getFefoColorClasses(fefo);
   const days = getDaysUntilExpiry(medicine.expiryDate);
   const isExpired = days < 0;
+
   return (
     <motion.div
       layout
-      whileHover={{ y: -3 }}
-      className={`group rounded-xl border bg-card p-5 transition-all hover:border-gold/50 ${colors.border}/40`}
+      whileHover={{ y: -2 }}
+      className="group rounded-sm border border-slate-700/60 bg-[#1B1E26] p-5 transition-all hover:border-slate-500 shadow-xl relative flex flex-col justify-between"
     >
-      <div className="mb-4 flex items-start justify-between gap-3">
-        <div>
-          <h3 className="font-semibold text-foreground">{medicine.brandName}</h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            {medicine.genericName}
+      <div>
+        <div className="mb-4 flex items-start justify-between gap-3 border-b border-slate-700/60 pb-3">
+          <div>
+            <h3 className="font-bold uppercase text-[#F8FAFC] text-base">{medicine.brandName}</h3>
+            <p className="mt-0.5 text-xs font-mono text-slate-300">
+              {medicine.genericName}
+            </p>
+          </div>
+          <StatusBadge status={medicine.status} />
+        </div>
+        <div className="mb-4 border border-slate-700/60 bg-[#0D0F12] p-3 font-mono text-xs rounded-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase text-slate-400 font-bold">FEFO Index</span>
+            <span className="text-[10px] uppercase font-bold text-amber-400">{getFefoLabel(fefo)}</span>
+          </div>
+          <p className="mt-1 text-xs font-bold text-[#F8FAFC]">
+            {isExpired ? 'EXPIRED (<30D HAZARD)' : `${days} DAYS REMAINING`}
           </p>
         </div>
-        <StatusBadge status={medicine.status} />
-      </div>
-      <div className="mb-4 rounded-lg border border-border bg-secondary/40 p-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">FEFO classification</span>
-          <span className={`h-2 w-2 rounded-full ${colors.bg}`} />
-        </div>
-        <p className={`mt-1 text-xs font-semibold ${colors.text}`}>
-          {isExpired ? 'Expired' : `${days} days remaining`}
-        </p>
-        <p className="mt-0.5 text-[10px] text-muted-foreground">
-          {getFefoLabel(fefo)}
-        </p>
-      </div>
-      <div className="grid grid-cols-2 gap-3 text-xs">
-        <div>
-          <p className="text-muted-foreground">Batch number</p>
-          <p className="mt-1 font-mono text-foreground">{medicine.batchNumber}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">Quantity</p>
-          <p className="mt-1 text-foreground">{medicine.quantity} units</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">Expires</p>
-          <p className="mt-1 text-foreground">{formatDate(medicine.expiryDate)}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">Logged</p>
-          <p className="mt-1 text-foreground">{formatDate(medicine.loggedAt)}</p>
+        <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 font-semibold">Batch ID</p>
+            <p className="mt-1 font-bold text-[#F8FAFC]">{medicine.batchNumber}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 font-semibold">Quantity</p>
+            <p className="mt-1 font-bold text-[#F8FAFC]">{medicine.quantity} UNITS</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 font-semibold">Expires</p>
+            <p className="mt-1 text-slate-300">{formatDate(medicine.expiryDate)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 font-semibold">Logged</p>
+            <p className="mt-1 text-slate-300">{formatDate(medicine.loggedAt)}</p>
+          </div>
         </div>
       </div>
+
       {(medicine.status === 'logged' ||
         medicine.status === 'approved' ||
         medicine.status === 'pending_verification') && (
-        <div className="mt-5 flex gap-2 border-t border-border pt-4">
+        <div className="mt-6 flex gap-2 border-t border-slate-700/60 pt-4 font-mono text-xs">
           {busy ? (
-            <div className="flex flex-1 items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Processing...
+            <div className="flex flex-1 items-center justify-center gap-2 text-xs font-mono text-slate-300 font-bold">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> PROCESSING...
             </div>
-          ) : isExpired ? (
+          ) : isExpired || fefo === 'hazard' ? (
             <Button
               size="sm"
-              variant="outline"
               onClick={onPickup}
-              className="flex-1 border-hazard text-hazard hover:bg-hazard/20"
+              className="flex-1 rounded-sm border border-red-500/60 bg-red-950/80 text-red-300 hover:bg-red-900 font-bold uppercase text-xs shadow-md"
             >
               <Truck className="mr-1.5 h-3.5 w-3.5" />
               Schedule Pickup
@@ -239,7 +241,7 @@ export function MedicineCard({
             <Button
               size="sm"
               onClick={onDonate}
-              className="flex-1 bg-safe text-safe-foreground hover:bg-safe/80"
+              className="flex-1 rounded-sm border border-emerald-500/60 bg-emerald-950/80 text-emerald-300 hover:bg-emerald-900 font-bold uppercase text-xs shadow-md"
             >
               <HeartHandshake className="mr-1.5 h-3.5 w-3.5" />
               Donate to NGO
@@ -248,10 +250,10 @@ export function MedicineCard({
             <Button
               size="sm"
               onClick={onSubmit}
-              className="flex-1 bg-gold text-charcoal hover:bg-gold/90"
+              className="flex-1 rounded-sm border border-amber-500 bg-amber-500 text-slate-950 hover:bg-amber-400 font-bold uppercase text-xs shadow-md"
             >
               <ArrowRight className="mr-1.5 h-3.5 w-3.5" />
-              Submit for review
+              Submit Review
             </Button>
           )}
         </div>

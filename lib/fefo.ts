@@ -7,8 +7,8 @@ export function getDaysUntilExpiry(expiryDate: string): number {
 
 export function getFefoStatus(expiryDate: string): FefoStatus {
   const days = getDaysUntilExpiry(expiryDate);
-  if (days < 0) return 'hazard';
-  if (days < 30) return 'warning';
+  if (days < 30) return 'hazard';
+  if (days <= 60) return 'warning';
   return 'safe';
 }
 

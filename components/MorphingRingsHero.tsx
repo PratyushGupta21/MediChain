@@ -2,11 +2,8 @@
 
 import * as React from "react"
 import { useEffect, useRef } from "react"
-import { animate, motionValue } from "framer-motion"
 
 const RMAX = 1400
-const FOV = 34
-const DPR_CAP = 1.5
 const TAU = Math.PI * 2
 
 const VERT = `
@@ -168,24 +165,23 @@ function mulberry32(a: number) {
     }
 }
 
-function gauss(rnd: () => number) {
-    const u1 = Math.max(1e-9, rnd())
-    const u2 = rnd()
-    const g = Math.sqrt(-2 * Math.log(u1)) * Math.cos(TAU * u2)
-    return Math.max(-3, Math.min(3, g))
-}
-
-function compile(gl: WebGLRenderingContext, type: number, src: string, tag: string) {
+function compile(gl: WebGLRenderingContext, type: number, src: string) {
     const sh = gl.createShader(type)!
     gl.shaderSource(sh, src)
     gl.compileShader(sh)
     return sh
 }
 
-const DEFAULT_COLORS = ["#2B2D31", "#C29B72", "#3A4027", "#8D321F", "#710014"]
+/* Exact 5 Brand Theme Colors */
+const DEFAULT_COLORS = [
+    "#1C1F26", // Charcoal / Slate
+    "#D4AF37", // Gold
+    "#2E8B57", // Safe / Olive
+    "#FFBF00", // Warning / Amber
+    "#DC143C", // Hazard / Crimson
+]
 
 export default function MorphingRingsHero() {
-    const hoverMV = useRef(motionValue(0)).current
     const hostRef = useRef<HTMLDivElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -207,8 +203,8 @@ export default function MorphingRingsHero() {
         if (!gl) return
 
         const ringProg = gl.createProgram()!
-        gl.attachShader(ringProg, compile(gl, gl.VERTEX_SHADER, VERT, "ring-vert"))
-        gl.attachShader(ringProg, compile(gl, gl.FRAGMENT_SHADER, FRAG, "ring-frag"))
+        gl.attachShader(ringProg, compile(gl, gl.VERTEX_SHADER, VERT))
+        gl.attachShader(ringProg, compile(gl, gl.FRAGMENT_SHADER, FRAG))
         gl.linkProgram(ringProg)
 
         gl.useProgram(ringProg)
@@ -224,7 +220,7 @@ export default function MorphingRingsHero() {
         }
 
         const ringBuf = gl.createBuffer()!
-        let ringCount = 2400
+        const ringCount = 2400
         const data = new Float32Array(ringCount * 4)
         const rnd = mulberry32(0x9a1b2c3)
         for (let i = 0; i < ringCount; i++) {
@@ -243,6 +239,17 @@ export default function MorphingRingsHero() {
         let animId = 0
         let spinAcc = 0
         let waveAcc = 0
+
+        const resize = () => {
+            const width = Math.max(300, host.clientWidth || window.innerWidth)
+            const height = Math.max(400, host.clientHeight || window.innerHeight)
+            canvas.width = width
+            canvas.height = height
+        }
+        resize()
+
+        const resizeObserver = new ResizeObserver(() => resize())
+        resizeObserver.observe(host)
 
         const frame = (now: number) => {
             spinAcc += 0.003
@@ -279,16 +286,12 @@ export default function MorphingRingsHero() {
             animId = requestAnimationFrame(frame)
         }
 
-        const resize = () => {
-            canvas.width = host.clientWidth
-            canvas.height = host.clientHeight
-        }
-        resize()
         window.addEventListener("resize", resize)
         animId = requestAnimationFrame(frame)
 
         return () => {
             cancelAnimationFrame(animId)
+            resizeObserver.disconnect()
             window.removeEventListener("resize", resize)
             gl.deleteProgram(ringProg)
             gl.deleteBuffer(ringBuf)
@@ -296,8 +299,8 @@ export default function MorphingRingsHero() {
     }, [])
 
     return (
-        <div ref={hostRef} className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-            <canvas ref={canvasRef} className="w-full h-full block" />
+        <div ref={hostRef} className="absolute inset-0 w-full h-full min-h-screen overflow-hidden pointer-events-none z-0">
+            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover min-w-[120vw] min-h-[120vh] scale-110 pointer-events-none block" />
         </div>
     )
 }
