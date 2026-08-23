@@ -103,63 +103,63 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0D0F12] font-mono text-xs text-slate-300">
-        <Loader2 className="mr-2 h-5 w-5 animate-spin text-amber-500" /> LOADING MEDICHAIN LEDGER...
+      <div className="flex min-h-screen items-center justify-center bg-[#0B1120] text-sm text-slate-300 font-sans">
+        <Loader2 className="mr-2 h-5 w-5 animate-spin text-emerald-500" /> Loading MediChain Ledger...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0F12] text-[#F8FAFC] font-sans antialiased selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-[#0B1120] text-slate-100 font-sans antialiased">
       <AuthModal />
-      <header className="sticky top-0 z-40 border-b border-slate-700/60 bg-[#0D0F12]/95 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-[#22304A] bg-[#0B1120]">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileMenu(!mobileMenu)}
-              className="rounded-sm border border-slate-700 p-2 text-slate-300 hover:text-white md:hidden"
+              className="rounded-lg border border-[#22304A] p-2 text-slate-300 hover:text-white md:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="flex h-8 w-8 items-center justify-center border border-amber-500 bg-amber-500 text-slate-950 font-extrabold text-sm shadow-md rounded-sm">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="flex h-8 w-8 items-center justify-center bg-emerald-600 text-white font-bold text-sm rounded-lg shadow-sm">
                 MC
               </div>
-              <span className="hidden text-base font-bold uppercase tracking-tight text-[#F8FAFC] sm:block font-sans">
-                MEDICHAIN
+              <span className="hidden text-lg font-bold tracking-tight text-slate-100 sm:block font-sans">
+                MEDI<span className="text-emerald-500">CHAIN</span>
               </span>
             </Link>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-2 border border-slate-700 bg-[#1B1E26] px-3 py-1.5 font-mono text-xs text-emerald-400 sm:flex uppercase font-bold rounded-sm">
+            <div className="hidden items-center gap-2 border border-[#22304A] bg-[#131C31] px-3.5 py-1.5 text-xs text-emerald-400 font-medium sm:flex rounded-full">
               <span className="h-2 w-2 animate-pulse bg-emerald-400 rounded-full" />
-              POLYGON AMOY · OPERATIONAL
+              Polygon Amoy · Operational
             </div>
 
             {/* Compact Role Tag */}
             {user && (
-              <div className="hidden border border-amber-500/50 bg-amber-500/10 px-2.5 py-1 font-mono text-xs text-amber-400 uppercase font-bold sm:block rounded-sm">
-                [ROLE: {ROLE_DISPLAY_NAMES[user.role] ?? user.role}]
+              <div className="hidden border border-[#22304A] bg-[#131C31] px-3 py-1 text-xs text-amber-400 font-semibold sm:block rounded-full">
+                ROLE: {ROLE_DISPLAY_NAMES[user.role] ?? user.role}
               </div>
             )}
 
             {user ? (
               <div className="group relative">
-                <button className="flex items-center gap-2 border border-slate-700 bg-[#1B1E26] px-3 py-1.5 text-left hover:border-slate-500 font-mono text-xs rounded-sm">
+                <button className="flex items-center gap-2.5 border border-[#22304A] bg-[#131C31] px-3.5 py-1.5 text-left hover:border-slate-500 text-xs rounded-lg font-sans">
                   <div
-                    className="flex h-6 w-6 items-center justify-center font-bold text-slate-950 rounded-sm"
-                    style={{ backgroundColor: user.avatarColor }}
+                    className="flex h-6 w-6 items-center justify-center font-bold text-white rounded-md text-xs"
+                    style={{ backgroundColor: user.avatarColor || '#10B981' }}
                   >
                     {user.name.split(' ').map((n) => n[0]).join('')}
                   </div>
                   <div className="hidden sm:block">
-                    <p className="font-bold text-[#F8FAFC] uppercase">{user.name}</p>
+                    <p className="font-semibold text-slate-100">{user.name}</p>
                   </div>
                   <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-400" />
                 </button>
-                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-slate-700 bg-[#1B1E26] p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 font-mono text-xs rounded-sm">
-                  <div className="border-b border-slate-700/60 pb-2 mb-1 px-2 pt-1 text-[10px] text-amber-400 font-bold uppercase">
+                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-[#22304A] bg-[#131C31] p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 text-xs rounded-lg font-sans">
+                  <div className="border-b border-[#22304A] pb-2 mb-1 px-3 pt-2 text-[11px] text-amber-400 font-semibold">
                     ROLE: {user.role}
                   </div>
                   <button
@@ -167,9 +167,9 @@ export default function DashboardPage() {
                       await signOut();
                       setAuthOpen(true);
                     }}
-                    className="flex w-full items-center gap-2 border border-transparent p-2 text-left text-slate-300 hover:border-slate-600 hover:text-white uppercase font-bold rounded-sm"
+                    className="flex w-full items-center gap-2 border border-transparent p-2 text-left text-slate-300 hover:bg-[#0B1120] hover:text-white font-medium rounded-md"
                   >
-                    <LogOut className="h-3.5 w-3.5" />
+                    <LogOut className="h-4 w-4" />
                     Sign Out
                   </button>
                 </div>
@@ -178,113 +178,52 @@ export default function DashboardPage() {
               <Button
                 size="sm"
                 onClick={() => setAuthOpen(true)}
-                className="rounded-sm border border-amber-500 bg-amber-500 text-slate-950 font-bold uppercase hover:bg-amber-400 text-xs px-4 h-9 shadow-md"
+                className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg px-4 py-2 text-xs"
               >
-                <UserRound className="mr-1.5 h-3.5 w-3.5" />
                 Sign In
               </Button>
             )}
           </div>
         </div>
-        {mobileMenu && (
-          <div className="border-t border-slate-700/60 bg-[#1B1E26] p-3 md:hidden font-mono text-xs">
-            {visiblePortalTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => switchPortal(tab.id)}
-                className={`flex w-full items-center gap-3 border p-2.5 text-left uppercase font-bold rounded-sm ${
-                  activeTab === tab.id
-                    ? 'border-amber-500 bg-amber-500 text-slate-950'
-                    : 'border-slate-700 text-slate-300'
-                }`}
-              >
-                <span>[{tab.index}]</span>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        )}
       </header>
 
-      <div className="mx-auto flex max-w-[1440px]">
-        <aside className="hidden w-64 shrink-0 border-r border-slate-700/60 px-4 py-8 md:block font-mono">
-          <div className="mb-4 px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-            [PERMITTED PORTALS]
-          </div>
-          <nav className="space-y-1.5">
-            {visiblePortalTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => switchPortal(tab.id)}
-                className={`flex w-full items-center gap-3 border px-3.5 py-3 text-left transition-colors text-xs font-mono uppercase font-bold rounded-sm ${
-                  activeTab === tab.id
-                    ? 'border-amber-500 bg-amber-500 text-slate-950 shadow-md'
-                    : 'border-slate-700 bg-slate-800/60 text-slate-200 hover:border-slate-500 hover:text-white'
-                }`}
-              >
-                <span className={activeTab === tab.id ? 'text-slate-950 font-bold' : 'text-slate-400'}>
-                  [{tab.index}]
-                </span>
-                <span>{tab.shortLabel}</span>
-              </button>
-            ))}
+      {/* Main Workspace Navigation Bar */}
+      <div className="border-b border-[#22304A] bg-[#131C31]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-8">
+          <nav className="flex space-x-1 overflow-x-auto py-2 text-xs font-sans">
+            {allPortalTabs.map((tab) => {
+              const Icon = tab.icon;
+              const active = activeTab === tab.id;
+              const isPermitted = permittedTabs.includes(tab.id);
+
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => switchPortal(tab.id)}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2.5 font-medium transition-all ${
+                    active
+                      ? 'bg-emerald-600 text-white font-semibold shadow-sm'
+                      : isPermitted
+                        ? 'text-slate-300 hover:bg-[#0B1120] hover:text-slate-100'
+                        : 'text-slate-500 hover:bg-[#0B1120] hover:text-slate-300'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </nav>
-
-          <div className="mt-8 border border-slate-700/60 bg-[#1B1E26] p-4 text-xs font-mono rounded-sm">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-emerald-400 animate-pulse rounded-full" />
-              <span className="font-bold text-[#F8FAFC] uppercase">LEDGER SYNCED</span>
-            </div>
-            <p className="mt-2 text-[11px] leading-relaxed text-slate-300">
-              CDSCO digital signature verification live on Polygon PoS.
-            </p>
-            {user ? (
-              <div className="mt-3 border-t border-slate-700/60 pt-2 space-y-1">
-                <p className="text-[10px] text-amber-400 font-bold uppercase">
-                  {ROLE_DISPLAY_NAMES[user.role] ?? user.role}
-                </p>
-                <p className="truncate text-[10px] text-slate-300 font-mono">
-                  {user.walletAddress}
-                </p>
-              </div>
-            ) : (
-              <p className="mt-3 text-[10px] text-slate-400 font-bold border-t border-slate-700/60 pt-2">
-                GUEST SESSION ACTIVE
-              </p>
-            )}
-          </div>
-        </aside>
-
-        <main className="min-w-0 flex-1 px-4 py-8 md:px-8 lg:px-12">
-          {!user && (
-            <div className="mb-8 border border-slate-700/60 bg-[#1B1E26] p-5 font-mono text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-sm">
-              <div className="flex items-center gap-3">
-                <CircleAlert className="h-5 w-5 text-amber-400 shrink-0" />
-                <div>
-                  <p className="font-bold text-[#F8FAFC] uppercase">GUEST SESSION ACTIVE</p>
-                  <p className="text-[11px] text-slate-300">Sign in to submit batches, inspect digital signatures, and access restricted role modules.</p>
-                </div>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => setAuthOpen(true)}
-                className="rounded-sm border border-amber-500 bg-amber-500 text-slate-950 font-bold uppercase hover:bg-amber-400 text-xs px-5 shrink-0 shadow-md"
-              >
-                Sign In / Sign Up
-              </Button>
-            </div>
-          )}
-
-          {activeTab === 'household' && <HouseholdPortal />}
-          {activeTab === 'pharmacist' && <PharmacistHub />}
-          {activeTab === 'ngo' && <NgoHub />}
-          {activeTab === 'waste' && <WasteCollectorModule />}
-        </main>
+        </div>
       </div>
 
-      <footer className="border-t border-slate-700/60 bg-[#0D0F12] px-6 py-6 text-center text-xs font-mono text-slate-400">
-        MEDICHAIN · PHARMACEUTICAL &amp; BIO-HAZARD TRACKING PROTOCOL
-      </footer>
+      {/* Main Workspace Body */}
+      <main className="mx-auto max-w-[1440px] px-6 py-8 md:px-8">
+        {activeTab === 'household' && <HouseholdPortal />}
+        {activeTab === 'pharmacist' && <PharmacistHub />}
+        {activeTab === 'ngo' && <NgoHub />}
+        {activeTab === 'waste' && <WasteCollectorModule />}
+      </main>
     </div>
   );
 }

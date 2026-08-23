@@ -29,7 +29,6 @@ import {
   Tag,
   Check,
   Copy,
-  ExternalLink,
 } from 'lucide-react';
 
 const SUBSIDIZED_CATALOG = [
@@ -52,7 +51,6 @@ export default function PharmacistHub() {
 
   async function approve(batch: MedicineBatch) {
     setBusyId(batch.id);
-    // Generate EIP-712 typed-data signature for Polygon Amoy Testnet (Chain ID 80002)
     const proof = await generateEip712Proof(batch.batchNumber);
     const txHash = await approveBatch(batch.id);
     if (txHash) {
@@ -81,14 +79,14 @@ export default function PharmacistHub() {
   return (
     <div className="space-y-8 font-sans">
       <SectionHeader
-        eyebrow="CDSCO Inspection &amp; Polygon Amoy Proofs"
+        eyebrow="CDSCO Verification &amp; Polygon Amoy Proofs"
         title="Pharmacist Verification Hub"
         description="Inspect submitted batches, run automated CDSCO Rule 96 checks, and sign EIP-712 typed-data proofs on Polygon Amoy (Chain ID 80002)."
         action={
-          <div className="flex gap-2 font-mono text-xs">
+          <div className="flex gap-2 text-xs font-sans">
             <Button
               onClick={() => setShowScanner(true)}
-              className="rounded-sm border border-amber-500 bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-md"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2 shadow-sm"
             >
               <QrCode className="mr-2 h-4 w-4" />
               Live GS1 DataMatrix Scan
@@ -104,40 +102,40 @@ export default function PharmacistHub() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-700/60 font-mono text-xs">
+      <div className="flex border-b border-[#22304A] text-xs font-sans">
         <button
           onClick={() => setActiveTabSection('queue')}
-          className={`py-3 px-5 font-bold uppercase transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
             activeTabSection === 'queue'
-              ? 'border-amber-500 text-amber-400'
+              ? 'border-emerald-500 text-emerald-400 font-bold'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          [01] Inspection Queue ({queue.length})
+          Inspection Queue ({queue.length})
         </button>
         <button
           onClick={() => setActiveTabSection('cdsco_checks')}
-          className={`py-3 px-5 font-bold uppercase transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
             activeTabSection === 'cdsco_checks'
-              ? 'border-amber-500 text-amber-400'
+              ? 'border-emerald-500 text-emerald-400 font-bold'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          [02] CDSCO Rule 96 Panel
+          CDSCO Rule 96 Panel
         </button>
         <button
           onClick={() => setActiveTabSection('subsidized')}
-          className={`py-3 px-5 font-bold uppercase transition-colors border-b-2 ${
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 ${
             activeTabSection === 'subsidized'
-              ? 'border-amber-500 text-amber-400'
+              ? 'border-emerald-500 text-emerald-400 font-bold'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          [03] Subsidized Inventory Catalog
+          Subsidized Inventory Catalog
         </button>
       </div>
 
-      {/* Live GS1 DataMatrix Camera Scanner Modal */}
+      {/* Live GS1 Camera Scanner Modal */}
       {showScanner && (
         <Gs1CameraScanner
           title="CDSCO GS1 DataMatrix Package Scanner"
@@ -152,36 +150,36 @@ export default function PharmacistHub() {
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-lg rounded-sm border border-emerald-500/60 bg-[#1B1E26] p-6 shadow-2xl font-mono text-xs space-y-4"
+            className="w-full max-w-lg rounded-xl border border-emerald-800/50 bg-[#131C31] p-6 shadow-2xl font-sans text-xs space-y-4"
           >
-            <div className="flex items-center gap-3 border-b border-slate-700/60 pb-3">
-              <div className="flex h-10 w-10 items-center justify-center bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 rounded-sm">
+            <div className="flex items-center gap-3 border-b border-[#22304A] pb-3">
+              <div className="flex h-10 w-10 items-center justify-center bg-emerald-950/60 text-emerald-400 border border-emerald-800/50 rounded-lg">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="font-bold text-base uppercase text-[#F8FAFC]">Polygon Amoy EIP-712 Proof Signed</h3>
-                <p className="text-slate-400 text-[11px]">Batch #{approved.batch.batchNumber} committed to Chain ID 80002</p>
+                <h3 className="font-semibold text-base text-slate-100">Polygon Amoy EIP-712 Proof Signed</h3>
+                <p className="text-slate-400 text-xs">Batch #{approved.batch.batchNumber} committed to Chain ID 80002</p>
               </div>
             </div>
 
-            <div className="border border-slate-700 bg-slate-900/90 p-4 space-y-2 text-[11px]">
+            <div className="border border-[#22304A] bg-[#0B1120] p-4 rounded-lg space-y-2 text-xs">
               <div className="flex justify-between items-center text-slate-300">
                 <span>Polygon Tx Hash:</span>
-                <button onClick={() => copyTx(approved.proof.txHash)} className="flex items-center gap-1 text-amber-400 hover:underline">
+                <button onClick={() => copyTx(approved.proof.txHash)} className="flex items-center gap-1 text-emerald-400 hover:underline">
                   {copiedTx ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                   {copiedTx ? 'COPIED' : 'COPY HASH'}
                 </button>
               </div>
-              <p className="break-all text-emerald-400 font-bold">{approved.proof.txHash}</p>
+              <p className="break-all text-emerald-400 font-mono font-semibold">{approved.proof.txHash}</p>
 
-              <div className="border-t border-slate-800 pt-2 text-[10px] space-y-1 text-slate-300">
+              <div className="border-t border-[#22304A] pt-2 text-xs space-y-1 text-slate-300 font-mono">
                 <p>QR Hash (Keccak256): <span className="text-slate-400">{approved.proof.qrHash.substring(0, 24)}...</span></p>
                 <p>EIP-712 Signature: <span className="text-slate-400">{approved.proof.signature.substring(0, 32)}...</span></p>
               </div>
             </div>
 
             <div className="flex justify-end pt-2">
-              <Button onClick={() => setApproved(null)} className="bg-emerald-500 text-slate-950 font-bold uppercase hover:bg-emerald-400">
+              <Button onClick={() => setApproved(null)} className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2">
                 Dismiss Proof
               </Button>
             </div>
@@ -191,15 +189,15 @@ export default function PharmacistHub() {
 
       {/* SECTION 1: INSPECTION QUEUE */}
       {activeTabSection === 'queue' && (
-        <div className="rounded-sm border border-slate-700/60 bg-[#1B1E26]">
-          <div className="flex items-center justify-between border-b border-slate-700/60 p-5 font-mono text-xs">
+        <div className="rounded-xl border border-[#22304A] bg-[#131C31] shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#22304A] p-5 font-sans text-xs">
             <div>
-              <h2 className="font-bold text-base uppercase text-[#F8FAFC]">Pending Batch Submissions</h2>
-              <p className="text-slate-400 font-sans text-xs mt-0.5">
+              <h2 className="font-semibold text-base text-slate-100">Pending Batch Submissions</h2>
+              <p className="text-slate-400 text-xs mt-0.5">
                 Review GTIN, packaging integrity, and expiry windows before signing.
               </p>
             </div>
-            <span className="border border-amber-500/60 bg-amber-500/10 px-3 py-1 font-bold text-amber-400">
+            <span className="border border-amber-800/50 bg-amber-950/60 px-3 py-1 font-semibold text-amber-300 rounded-full">
               {queue.length} Awaiting Verification
             </span>
           </div>
@@ -213,22 +211,22 @@ export default function PharmacistHub() {
               />
             </div>
           ) : (
-            <div className="divide-y divide-slate-700/60">
+            <div className="divide-y divide-[#22304A]">
               {queue.map((batch) => (
-                <div key={batch.id} className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between font-mono text-xs">
+                <div key={batch.id} className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between font-sans text-xs">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-amber-500/40 bg-amber-500/10 text-amber-400 rounded-sm">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-blue-800/50 bg-blue-950/60 text-blue-400 rounded-lg">
                       <Package className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="font-bold text-[#F8FAFC] text-sm uppercase">
+                      <p className="font-semibold text-slate-100 text-sm">
                         {batch.brandName}{' '}
-                        <span className="font-mono text-xs font-normal text-slate-400">({batch.genericName})</span>
+                        <span className="text-xs font-normal text-slate-400">({batch.genericName})</span>
                       </p>
-                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-slate-300 text-[11px]">
-                        <span>Batch: <b className="text-white">{batch.batchNumber}</b></span>
-                        <span>Quantity: <b className="text-white">{batch.quantity} units</b></span>
-                        <span>Expires: <b className="text-white">{formatDate(batch.expiryDate)}</b></span>
+                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-slate-300 text-xs">
+                        <span>Batch: <b className="text-slate-100 font-mono">{batch.batchNumber}</b></span>
+                        <span>Quantity: <b className="text-slate-100">{batch.quantity} units</b></span>
+                        <span>Expires: <b className="text-slate-100">{formatDate(batch.expiryDate)}</b></span>
                       </div>
                     </div>
                   </div>
@@ -239,7 +237,7 @@ export default function PharmacistHub() {
                       variant="outline"
                       disabled={busyId === batch.id}
                       onClick={() => reject(batch.id)}
-                      className="border-red-500/60 bg-red-950/40 text-red-300 hover:bg-red-900 font-bold uppercase"
+                      className="border-red-800/50 bg-red-950/40 text-red-300 hover:bg-red-900 font-semibold rounded-lg"
                     >
                       <XCircle className="mr-1.5 h-3.5 w-3.5" />
                       Reject
@@ -248,7 +246,7 @@ export default function PharmacistHub() {
                       size="sm"
                       disabled={busyId === batch.id}
                       onClick={() => approve(batch)}
-                      className="bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 uppercase shadow-md"
+                      className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg px-4 py-2 shadow-sm"
                     >
                       {busyId === batch.id ? (
                         <>
@@ -272,44 +270,44 @@ export default function PharmacistHub() {
 
       {/* SECTION 2: CDSCO RULE 96 PANEL */}
       {activeTabSection === 'cdsco_checks' && (
-        <div className="space-y-4 font-mono text-xs">
-          <div className="border border-slate-700/60 bg-[#1B1E26] p-6 rounded-sm">
-            <h3 className="font-bold text-base uppercase text-[#F8FAFC]">CDSCO Rule 96 Regulatory Cross-Reference Panel</h3>
-            <p className="text-slate-300 font-sans text-xs mt-1 leading-relaxed">
+        <div className="space-y-4 font-sans text-xs">
+          <div className="border border-[#22304A] bg-[#131C31] p-6 rounded-xl">
+            <h3 className="font-semibold text-base text-slate-100">CDSCO Rule 96 Regulatory Cross-Reference Panel</h3>
+            <p className="text-slate-300 text-xs mt-1 leading-relaxed">
               Automated compliance verification engine matching GS1 2D DataMatrix GTINs against Central Drugs Standard Control Organization databases.
             </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="border border-slate-700/60 bg-[#1B1E26] p-5 rounded-sm">
-              <span className="text-[10px] text-amber-400 font-bold uppercase">[CHECK 01]</span>
-              <h4 className="font-bold text-sm uppercase text-white mt-1">2D DataMatrix Serialization</h4>
-              <p className="text-slate-300 font-sans text-xs mt-2 leading-relaxed">
+            <div className="border border-[#22304A] bg-[#131C31] p-5 rounded-xl">
+              <span className="text-[10px] text-emerald-500 font-semibold uppercase tracking-wider">[CHECK 01]</span>
+              <h4 className="font-semibold text-sm text-slate-100 mt-1">2D DataMatrix Serialization</h4>
+              <p className="text-slate-300 text-xs mt-2 leading-relaxed">
                 Requires unique GTIN, expiry timestamp, and serial number printed directly on primary packaging.
               </p>
-              <div className="mt-4 border border-emerald-500/40 bg-emerald-950/40 p-2 text-emerald-300 text-[11px] font-bold">
+              <div className="mt-4 border border-emerald-800/50 bg-emerald-950/40 p-2 text-emerald-300 text-xs font-semibold rounded-lg">
                 STATUS: COMPLIANT
               </div>
             </div>
 
-            <div className="border border-slate-700/60 bg-[#1B1E26] p-5 rounded-sm">
-              <span className="text-[10px] text-amber-400 font-bold uppercase">[CHECK 02]</span>
-              <h4 className="font-bold text-sm uppercase text-white mt-1">CDSCO License Registry</h4>
-              <p className="text-slate-300 font-sans text-xs mt-2 leading-relaxed">
+            <div className="border border-[#22304A] bg-[#131C31] p-5 rounded-xl">
+              <span className="text-[10px] text-emerald-500 font-semibold uppercase tracking-wider">[CHECK 02]</span>
+              <h4 className="font-semibold text-sm text-slate-100 mt-1">CDSCO License Registry</h4>
+              <p className="text-slate-300 text-xs mt-2 leading-relaxed">
                 Verifies licensed inspector signature against active state drug control register.
               </p>
-              <div className="mt-4 border border-emerald-500/40 bg-emerald-950/40 p-2 text-emerald-300 text-[11px] font-bold">
+              <div className="mt-4 border border-emerald-800/50 bg-emerald-950/40 p-2 text-emerald-300 text-xs font-semibold rounded-lg">
                 STATUS: AUTHORIZED
               </div>
             </div>
 
-            <div className="border border-slate-700/60 bg-[#1B1E26] p-5 rounded-sm">
-              <span className="text-[10px] text-amber-400 font-bold uppercase">[CHECK 03]</span>
-              <h4 className="font-bold text-sm uppercase text-white mt-1">Polygon Amoy EIP-712</h4>
-              <p className="text-slate-300 font-sans text-xs mt-2 leading-relaxed">
+            <div className="border border-[#22304A] bg-[#131C31] p-5 rounded-xl">
+              <span className="text-[10px] text-emerald-500 font-semibold uppercase tracking-wider">[CHECK 03]</span>
+              <h4 className="font-semibold text-sm text-slate-100 mt-1">Polygon Amoy EIP-712</h4>
+              <p className="text-slate-300 text-xs mt-2 leading-relaxed">
                 EIP-712 structured data hash broadcasted to Polygon Amoy consensus (Chain ID 80002).
               </p>
-              <div className="mt-4 border border-emerald-500/40 bg-emerald-950/40 p-2 text-emerald-300 text-[11px] font-bold">
+              <div className="mt-4 border border-emerald-800/50 bg-emerald-950/40 p-2 text-emerald-300 text-xs font-semibold rounded-lg">
                 STATUS: IMMUTABLE
               </div>
             </div>
@@ -319,33 +317,33 @@ export default function PharmacistHub() {
 
       {/* SECTION 3: SUBSIDIZED CATALOG */}
       {activeTabSection === 'subsidized' && (
-        <div className="space-y-4 font-mono text-xs">
-          <div className="border border-slate-700/60 bg-[#1B1E26] p-6 rounded-sm">
-            <h3 className="font-bold text-base uppercase text-[#F8FAFC]">Subsidized Community Inventory</h3>
-            <p className="text-slate-300 font-sans text-xs mt-1 leading-relaxed">
+        <div className="space-y-4 font-sans text-xs">
+          <div className="border border-[#22304A] bg-[#131C31] p-6 rounded-xl">
+            <h3 className="font-semibold text-base text-slate-100">Subsidized Community Inventory</h3>
+            <p className="text-slate-300 text-xs mt-1 leading-relaxed">
               Discounted surplus pharmaceutical batches cleared by CDSCO inspectors for subsidized community distribution.
             </p>
           </div>
 
           <div className="space-y-3">
             {SUBSIDIZED_CATALOG.map((item) => (
-              <div key={item.id} className="border border-slate-700/60 bg-[#1B1E26] p-5 rounded-sm flex flex-col md:flex-row justify-between md:items-center gap-4">
+              <div key={item.id} className="border border-[#22304A] bg-[#131C31] p-5 rounded-xl flex flex-col md:flex-row justify-between md:items-center gap-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-amber-400" />
-                    <h4 className="font-bold text-sm text-[#F8FAFC] uppercase">{item.name}</h4>
-                    <span className="border border-emerald-500/40 bg-emerald-950/60 text-emerald-300 text-[10px] font-bold px-2 py-0.5 uppercase">
+                    <Tag className="h-4 w-4 text-emerald-400" />
+                    <h4 className="font-semibold text-sm text-slate-100">{item.name}</h4>
+                    <span className="border border-emerald-800/50 bg-emerald-950/60 text-emerald-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                       {item.subsidizedPrice}
                     </span>
                   </div>
-                  <p className="mt-1 text-slate-300 text-xs font-mono">
-                    Batch: <b className="text-white">{item.batch}</b> · Qty: <b className="text-white">{item.qty} units</b> · Retail: <span className="line-through text-slate-400">{item.originalPrice}</span>
+                  <p className="mt-1 text-slate-300 text-xs">
+                    Batch: <b className="text-slate-100 font-mono">{item.batch}</b> · Qty: <b className="text-slate-100">{item.qty} units</b> · Retail: <span className="line-through text-slate-400">{item.originalPrice}</span>
                   </p>
-                  <p className="mt-1 text-[11px] text-slate-400">
+                  <p className="mt-1 text-xs text-slate-400">
                     Cleared by: {item.verifiedBy}
                   </p>
                 </div>
-                <Button size="sm" className="bg-amber-500 text-slate-950 font-bold uppercase hover:bg-amber-400 shrink-0">
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2 shrink-0">
                   Allocate to Clinic
                 </Button>
               </div>

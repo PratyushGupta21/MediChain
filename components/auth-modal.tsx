@@ -34,13 +34,6 @@ const PERSONA_ICONS: Record<Persona, LucideIcon> = {
   waste: Truck,
 };
 
-const PERSONA_DESCRIPTIONS: Record<Persona, string> = {
-  household: 'Log unused medicines, donate to NGOs, schedule waste pick-up',
-  pharmacist: 'Verify donations, approve batches, sign to the ledger',
-  ngo: 'Search FEFO catalog, request batch allocations for patients',
-  waste: 'Manage bio-medical disposal manifests, confirm incineration',
-};
-
 export default function AuthModal() {
   const { isAuthOpen, setAuthOpen, signIn, signUp } = useApp();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -82,27 +75,27 @@ export default function AuthModal() {
         if (!open) reset();
       }}
     >
-      <DialogContent className="border border-slate-700/80 bg-[#14171D] text-slate-100 shadow-2xl sm:max-w-md p-6 font-sans">
+      <DialogContent className="border border-[#22304A] bg-[#131C31] text-slate-100 shadow-2xl sm:max-w-md p-6 font-sans rounded-xl">
         <DialogHeader className="pb-2">
-          <DialogTitle className="text-center text-xl font-bold uppercase tracking-tight text-slate-100">
+          <DialogTitle className="text-center text-xl font-bold tracking-tight text-slate-100">
             {mode === 'signin' ? 'Sign In to MediChain' : 'Create Your Account'}
           </DialogTitle>
-          <DialogDescription className="text-center font-mono text-xs text-slate-400">
+          <DialogDescription className="text-center text-xs text-slate-400">
             {mode === 'signin'
-              ? 'Enter your credentials to access your workspace'
-              : 'Choose your role and create an account to get started'}
+              ? 'Enter your credentials to access your portal'
+              : 'Choose your role and register to access the ledger'}
           </DialogDescription>
         </DialogHeader>
 
-        {/* High-Contrast Tab Toggle */}
-        <div className="flex border-b border-slate-700/80 mb-4 font-mono text-xs">
+        {/* Tab Toggle */}
+        <div className="flex bg-[#0B1120] p-1 rounded-lg border border-[#22304A] mb-4 text-xs font-medium">
           <button
             type="button"
             onClick={() => switchMode('signin')}
-            className={`flex-1 py-2.5 text-center font-semibold transition-all ${
+            className={`flex-1 py-2 text-center rounded-md transition-all ${
               mode === 'signin'
-                ? 'border-b-2 border-amber-500 text-amber-400 font-bold'
-                : 'border-b-2 border-transparent text-slate-400 hover:text-slate-200'
+                ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             Sign In
@@ -110,10 +103,10 @@ export default function AuthModal() {
           <button
             type="button"
             onClick={() => switchMode('signup')}
-            className={`flex-1 py-2.5 text-center font-semibold transition-all ${
+            className={`flex-1 py-2 text-center rounded-md transition-all ${
               mode === 'signup'
-                ? 'border-b-2 border-amber-500 text-amber-400 font-bold'
-                : 'border-b-2 border-transparent text-slate-400 hover:text-slate-200'
+                ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             Sign Up
@@ -124,152 +117,111 @@ export default function AuthModal() {
           {mode === 'signup' && (
             <>
               {/* Persona selector */}
-              <div className="space-y-2 font-mono text-xs">
-                <Label className="text-[10px] font-bold uppercase text-slate-400">
-                  Select your role
+              <div className="space-y-2 text-xs">
+                <Label className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                  Select Your Role
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
                   {PERSONA_PRESETS.map((preset) => {
                     const Icon = PERSONA_ICONS[preset.persona];
                     const active = selectedPersona === preset.persona;
                     return (
-                      <motion.button
+                      <button
                         key={preset.persona}
                         type="button"
-                        whileTap={{ scale: 0.97 }}
                         onClick={() => setSelectedPersona(preset.persona)}
-                        className={`flex items-center gap-2 rounded-sm border p-2.5 text-left text-xs transition-colors ${
+                        className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-left text-xs transition-all ${
                           active
-                            ? 'border-amber-500 bg-amber-500/10 text-amber-300 font-bold'
-                            : 'border-slate-700 bg-slate-800/60 text-slate-300 hover:border-slate-500'
+                            ? 'border-emerald-500 bg-emerald-600 text-white font-medium shadow-sm'
+                            : 'border-[#22304A] bg-[#0B1120] text-slate-300 hover:text-slate-100 hover:border-slate-500'
                         }`}
                       >
                         <div
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm"
-                          style={{
-                            backgroundColor: `${preset.avatarColor}25`,
-                            border: `1px solid ${preset.avatarColor}60`,
-                          }}
-                        >
-                          <Icon
-                            className="h-3.5 w-3.5"
-                            style={{ color: preset.avatarColor }}
-                          />
-                        </div>
-                        <span
-                          className={`font-semibold ${
-                            active ? 'text-amber-400' : 'text-slate-200'
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
+                            active ? 'bg-emerald-700 text-white' : 'bg-[#131C31] text-slate-400'
                           }`}
                         >
-                          {preset.persona === 'household'
-                            ? 'Household'
-                            : preset.persona === 'pharmacist'
-                              ? 'Pharmacist'
-                              : preset.persona === 'ngo'
-                                ? 'NGO'
-                                : 'Waste Op.'}
-                        </span>
-                      </motion.button>
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <span className="font-semibold">{preset.roleLabel}</span>
+                      </button>
                     );
                   })}
                 </div>
-                <p className="text-[11px] text-slate-400 font-mono">
-                  {PERSONA_DESCRIPTIONS[selectedPersona]}
-                </p>
               </div>
 
-              {/* Full name */}
-              <div className="space-y-1.5 font-mono text-xs">
-                <Label htmlFor="fullName" className="text-[10px] font-bold uppercase text-slate-400">
-                  Full name
+              <div className="space-y-1.5 text-xs">
+                <Label htmlFor="fullName" className="text-slate-300 font-medium">
+                  Full Name
                 </Label>
                 <div className="relative">
-                  <UserRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <UserRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                   <Input
                     id="fullName"
                     type="text"
+                    placeholder="e.g. Dr. Priya Menon"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g. Aarav Sharma"
-                    className="pl-10 bg-slate-900/80 border border-slate-700 focus:border-amber-500 text-slate-100 placeholder-slate-500 font-mono text-xs rounded-sm"
+                    className="border-[#22304A] bg-[#0B1120] text-slate-100 focus:border-blue-500 rounded-lg pl-9 text-xs placeholder:text-slate-500"
                   />
                 </div>
               </div>
             </>
           )}
 
-          {/* Email */}
-          <div className="space-y-1.5 font-mono text-xs">
-            <Label htmlFor="email" className="text-[10px] font-bold uppercase text-slate-400">
-              Email
+          <div className="space-y-1.5 text-xs">
+            <Label htmlFor="email" className="text-slate-300 font-medium">
+              Email Address
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <Input
                 id="email"
                 type="email"
+                required
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="pl-10 bg-slate-900/80 border border-slate-700 focus:border-amber-500 text-slate-100 placeholder-slate-500 font-mono text-xs rounded-sm"
-                required
+                className="border-[#22304A] bg-[#0B1120] text-slate-100 focus:border-blue-500 rounded-lg pl-9 text-xs placeholder:text-slate-500"
               />
             </div>
           </div>
 
-          {/* Password */}
-          <div className="space-y-1.5 font-mono text-xs">
-            <Label htmlFor="password" className="text-[10px] font-bold uppercase text-slate-400">
+          <div className="space-y-1.5 text-xs">
+            <Label htmlFor="password" className="text-slate-300 font-medium">
               Password
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <Input
                 id="password"
                 type="password"
+                required
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimum 6 characters"
-                className="pl-10 bg-slate-900/80 border border-slate-700 focus:border-amber-500 text-slate-100 placeholder-slate-500 font-mono text-xs rounded-sm"
-                minLength={6}
-                required
+                className="border-[#22304A] bg-[#0B1120] text-slate-100 focus:border-blue-500 rounded-lg pl-9 text-xs placeholder:text-slate-500"
               />
             </div>
           </div>
 
-          {/* Styled High-Contrast Sign In Button */}
           <Button
             type="submit"
             disabled={busy}
-            className="w-full bg-amber-500 text-slate-950 font-mono font-bold hover:bg-amber-400 py-3 rounded-sm transition-all shadow-md"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg py-2.5 text-xs transition-colors shadow-sm mt-2"
           >
             {busy ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {mode === 'signin' ? 'Signing in...' : 'Creating account...'}
+                Processing...
               </>
             ) : mode === 'signin' ? (
-              'Sign In'
+              'Sign In to Portal'
             ) : (
-              'Create Account'
+              `Create Account`
             )}
           </Button>
         </form>
-
-        <div className="mt-2 rounded-sm border border-slate-700/80 bg-slate-900/50 p-3 font-mono text-xs">
-          <p className="text-slate-400 text-center">
-            {mode === 'signin'
-              ? "Don't have an account? "
-              : 'Already have an account? '}
-            <button
-              type="button"
-              onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}
-              className="font-bold text-amber-400 hover:underline"
-            >
-              {mode === 'signin' ? 'Sign up' : 'Sign in'}
-            </button>
-          </p>
-        </div>
       </DialogContent>
     </Dialog>
   );

@@ -4,56 +4,52 @@
 
 @layer base {
   :root {
-    /* Swiss Tech Aesthetic Color Palette */
-    --background: 220 18% 6%;         /* Slate Charcoal #0D0F12 */
-    --foreground: 210 40% 98%;        /* Crisp Off-White #F8FAFC */
-    --card: 222 18% 13%;              /* Elevated Charcoal #1B1E26 */
+    /* Clinical Slate & Emerald Color System */
+    --background: 222 47% 8%;          /* Grounded Navy Slate #0B1120 */
+    --foreground: 210 40% 98%;         /* Crisp Off-White #F8FAFC */
+    --card: 222 44% 13%;               /* Elevated Slate #131C31 */
     --card-foreground: 210 40% 98%;
-    --popover: 222 18% 13%;
+    --popover: 222 44% 13%;
     --popover-foreground: 210 40% 98%;
-    --primary: 38 92% 50%;            /* Premium Amber #F59E0B */
-    --primary-foreground: 222 47% 11%;
-    --secondary: 215 25% 18%;         /* Slate Gray #1E293B */
+    --primary: 217 91% 60%;            /* Royal Blue #2563EB */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 37% 21%;          /* Subdued Slate #22304A */
     --secondary-foreground: 210 40% 98%;
-    --muted: 215 25% 18%;
+    --muted: 220 37% 21%;
     --muted-foreground: 215 16% 70%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;         /* Crimson Red #EF4444 */
-    --destructive-foreground: 0 0% 98%;
-    --border: 215 20% 28%;            /* hairline border #334155 */
-    --input: 215 20% 28%;
-    --ring: 38 92% 50%;
-    --radius: 0.125rem;
+    --accent: 160 84% 39%;             /* Clinical Emerald #10B981 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;          /* Crimson #DC2626 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 37% 21%;             /* Structural Border #22304A */
+    --input: 220 37% 21%;
+    --ring: 217 91% 60%;
+    --radius: 0.75rem;                 /* rounded-xl */
 
     /* Status Accent Tokens */
-    --gold: 38 92% 50%;               /* Premium Amber #F59E0B */
-    --safe: 160 84% 39%;              /* Emerald Green #10B981 */
-    --safe-foreground: 160 84% 95%;
-    --warning: 38 92% 50%;            /* Amber #F59E0B */
-    --warning-foreground: 38 92% 95%;
-    --hazard: 0 84% 60%;              /* Crimson Red #EF4444 */
-    --hazard-foreground: 0 84% 95%;
+    --safe: 160 84% 39%;               /* Clinical Emerald #10B981 */
+    --warning: 38 92% 50%;             /* Amber #D97706 */
+    --hazard: 0 84% 60%;               /* Crimson #DC2626 */
   }
 
   .dark {
-    --background: 220 18% 6%;         /* Slate Charcoal #0D0F12 */
-    --foreground: 210 40% 98%;        /* Crisp Off-White #F8FAFC */
-    --card: 222 18% 13%;              /* Elevated Charcoal #1B1E26 */
+    --background: 222 47% 8%;          /* #0B1120 */
+    --foreground: 210 40% 98%;         /* #F8FAFC */
+    --card: 222 44% 13%;               /* #131C31 */
     --card-foreground: 210 40% 98%;
-    --popover: 222 18% 13%;
+    --popover: 222 44% 13%;
     --popover-foreground: 210 40% 98%;
-    --border: 215 20% 28%;
-    --input: 215 20% 28%;
+    --border: 220 37% 21%;             /* #22304A */
+    --input: 220 37% 21%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border rounded-sm;
+    @apply border-border;
   }
   body {
-    @apply bg-[#0D0F12] text-[#F8FAFC] font-sans antialiased;
+    @apply bg-[#0B1120] text-[#F8FAFC] font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
     letter-spacing: -0.01em;
   }
@@ -62,35 +58,18 @@
   }
 }
 
-@layer utilities {
-  .text-safe { color: #10B981; }
-  .text-warning { color: #F59E0B; }
-  .text-hazard { color: #EF4444; }
-  .text-gold { color: #F59E0B; }
-
-  .bg-safe { background-color: #10B981; }
-  .bg-warning { background-color: #F59E0B; }
-  .bg-hazard { background-color: #EF4444; }
-  .bg-gold { background-color: #F59E0B; }
-
-  .border-safe { border-color: #10B981; }
-  .border-warning { border-color: #F59E0B; }
-  .border-hazard { border-color: #EF4444; }
-  .border-gold { border-color: #F59E0B; }
-
-  /* Swiss Tech Grid 1px hairline border grid tile */
-  .swiss-grid-tile {
-    @apply border border-slate-700/60 bg-[#1B1E26] p-6 relative transition-colors hover:border-slate-500;
-  }
-  .swiss-grid-container {
-    @apply grid gap-px bg-slate-700/60 border border-slate-700/60;
-  }
-
-  /* Crisp Swiss typography utilities */
-  .swiss-display {
-    @apply font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-none uppercase text-[#F8FAFC];
-  }
-  .swiss-tag {
-    @apply text-xs font-mono uppercase tracking-[0.2em] text-slate-400 font-semibold;
-  }
+/* Custom scrollbar for Clinical Slate design */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0B1120;
+}
+::-webkit-scrollbar-thumb {
+  background: #22304A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
 }
