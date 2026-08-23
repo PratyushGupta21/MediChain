@@ -76,14 +76,12 @@ export default function Home() {
             >
               NGO Redistribution
             </button>
-            {(!user || user.role === 'WASTE_COLLECTOR') && (
-              <button
-                onClick={() => navigateProtected('waste')}
-                className="border border-slate-200 bg-white px-4 py-2 hover:bg-slate-50 text-slate-800 font-semibold rounded-lg transition-colors shadow-sm"
-              >
-                Waste Collector
-              </button>
-            )}
+            <button
+              onClick={() => navigateProtected('waste')}
+              className="border border-slate-200 bg-white px-4 py-2 hover:bg-slate-50 text-slate-800 font-semibold rounded-lg transition-colors shadow-sm"
+            >
+              Waste Collector
+            </button>
           </div>
 
           <div className="flex items-center gap-3 font-sans">

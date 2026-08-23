@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/lib/context/app-context';
-import type { Persona, DbRole } from '@/lib/types';
+import type { Persona } from '@/lib/types';
 import { ROLE_DISPLAY_NAMES } from '@/lib/types';
 import {
   Activity,
@@ -41,29 +41,12 @@ const allPortalTabs: {
   { id: 'waste', index: '04', label: 'Waste Collector', shortLabel: 'Waste', icon: Truck },
 ];
 
-function getPermittedTabs(role?: DbRole): Persona[] {
-  if (!role) return ['household', 'pharmacist', 'ngo'];
-  switch (role) {
-    case 'HOUSEHOLD':
-      return ['household'];
-    case 'PHARMACIST':
-      return ['pharmacist'];
-    case 'NGO':
-      return ['ngo'];
-    case 'WASTE_COLLECTOR':
-      return ['waste', 'household', 'pharmacist', 'ngo'];
-    default:
-      return ['household'];
-  }
-}
-
 export default function DashboardPage() {
   const { user, loading, setAuthOpen, signOut } = useApp();
   const [activeTab, setActiveTab] = useState<Persona>(user?.persona ?? 'household');
   const [mobileMenu, setMobileMenu] = useState(false);
 
-  const permittedTabs = getPermittedTabs(user?.role);
-  const visiblePortalTabs = allPortalTabs.filter((t) => permittedTabs.includes(t.id));
+  const visiblePortalTabs = allPortalTabs;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -183,7 +166,6 @@ export default function DashboardPage() {
             {visiblePortalTabs.map((tab) => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
-              const isPermitted = permittedTabs.includes(tab.id);
 
               return (
                 <button
@@ -192,9 +174,7 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 rounded-lg px-4 py-2.5 font-medium transition-all ${
                     active
                       ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-600/20'
-                      : isPermitted
-                        ? 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900'
-                        : 'text-slate-400 hover:bg-slate-200/40 hover:text-slate-600'
+                      : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900'
                   }`}
                 >
                   <Icon className="h-4 w-4" />

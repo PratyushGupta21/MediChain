@@ -87,9 +87,9 @@ export default function WasteCollectorModule() {
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 border border-red-200 text-red-600 mb-5">
           <ShieldAlert className="h-8 w-8" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900">Access Restricted</h2>
+        <h2 className="text-xl font-bold text-slate-900">Access Restricted: Authorized CBWTF Operators Only</h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-700 font-medium">
-          Access Restricted: The Bio-Medical Waste Telemetry Portal &amp; Pickup Routes are reserved exclusively for authorized CBWTF operators.
+          The Bio-Medical Waste Telemetry Portal &amp; Pickup Routes are reserved exclusively for authorized CBWTF operators.
         </p>
         <div className="mt-6 border-t border-slate-100 pt-4 text-xs text-slate-500">
           CBWTF license verification required for thermal telemetry logs, vehicle manifests, and CDSCO Form-IV regulatory reports.
