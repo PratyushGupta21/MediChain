@@ -41,9 +41,27 @@ const allPortalTabs: {
   { id: 'waste', index: '04', label: 'Waste Collector', shortLabel: 'Waste', icon: Truck },
 ];
 
+function getRolePersona(role?: string): Persona {
+  if (!role) return 'household';
+  switch (role) {
+    case 'HOUSEHOLD':
+      return 'household';
+    case 'PHARMACIST':
+      return 'pharmacist';
+    case 'NGO':
+    case 'RECIPIENT':
+      return 'ngo';
+    case 'WASTE_COLLECTOR':
+    case 'WASTE_OP':
+      return 'waste';
+    default:
+      return 'household';
+  }
+}
+
 export default function DashboardPage() {
   const { user, loading, setAuthOpen, signOut } = useApp();
-  const [activeTab, setActiveTab] = useState<Persona>(user?.persona ?? 'household');
+  const [activeTab, setActiveTab] = useState<Persona>(() => getRolePersona(user?.role));
   const [mobileMenu, setMobileMenu] = useState(false);
 
   const visiblePortalTabs = allPortalTabs;
@@ -58,7 +76,7 @@ export default function DashboardPage() {
       }
     }
     if (user) {
-      setActiveTab(user.persona);
+      setActiveTab(getRolePersona(user.role));
     }
   }, [user]);
 

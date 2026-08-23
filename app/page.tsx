@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/lib/context/app-context';
@@ -16,13 +16,38 @@ import LandingHero from '@/components/LandingHero';
 import AuthModal from '@/components/auth-modal';
 import { CdscoModal, Eip712Modal, PolygonModal } from '@/components/footer-modals';
 
+function getRolePersona(role?: string): Persona {
+  if (!role) return 'household';
+  switch (role) {
+    case 'HOUSEHOLD':
+      return 'household';
+    case 'PHARMACIST':
+      return 'pharmacist';
+    case 'NGO':
+    case 'RECIPIENT':
+      return 'ngo';
+    case 'WASTE_COLLECTOR':
+    case 'WASTE_OP':
+      return 'waste';
+    default:
+      return 'household';
+  }
+}
+
 export default function Home() {
   const router = useRouter();
   const { user, setAuthOpen, signOut } = useApp();
+  const [activeTab, setActiveTab] = useState<Persona>(() => getRolePersona(user?.role));
 
   const [cdscoOpen, setCdscoOpen] = useState(false);
   const [eip712Open, setEip712Open] = useState(false);
   const [polygonOpen, setPolygonOpen] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setActiveTab(getRolePersona(user.role));
+    }
+  }, [user]);
 
   const navigateProtected = (targetTab: Persona) => {
     if (!user) {
@@ -58,30 +83,27 @@ export default function Home() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden items-center gap-2 text-xs font-sans lg:flex">
-            <button
-              onClick={() => navigateProtected('household')}
-              className="border border-slate-200 bg-white px-4 py-2 hover:bg-slate-50 text-slate-800 font-semibold rounded-lg transition-colors shadow-sm"
-            >
-              Household
-            </button>
-            <button
-              onClick={() => navigateProtected('pharmacist')}
-              className="border border-emerald-200 bg-emerald-50 px-4 py-2 hover:bg-emerald-100 text-emerald-800 font-bold rounded-lg transition-colors"
-            >
-              Verification Hub
-            </button>
-            <button
-              onClick={() => navigateProtected('ngo')}
-              className="border border-slate-200 bg-white px-4 py-2 hover:bg-slate-50 text-slate-800 font-semibold rounded-lg transition-colors shadow-sm"
-            >
-              NGO Redistribution
-            </button>
-            <button
-              onClick={() => navigateProtected('waste')}
-              className="border border-slate-200 bg-white px-4 py-2 hover:bg-slate-50 text-slate-800 font-semibold rounded-lg transition-colors shadow-sm"
-            >
-              Waste Collector
-            </button>
+            {[
+              { id: 'household' as Persona, label: 'Household' },
+              { id: 'pharmacist' as Persona, label: 'Verification Hub' },
+              { id: 'ngo' as Persona, label: 'NGO Redistribution' },
+              { id: 'waste' as Persona, label: 'Waste Collector' },
+            ].map((tab) => {
+              const active = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => navigateProtected(tab.id)}
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+                    active
+                      ? 'bg-emerald-600 text-white font-bold shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 bg-transparent'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-3 font-sans">
