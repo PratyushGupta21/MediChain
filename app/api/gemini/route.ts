@@ -14,17 +14,22 @@ export async function POST(req: Request) {
 
         let systemInstruction = '';
         if (task === 'prescription_ocr') {
-          systemInstruction = `You are an AI Prescription Reader. Analyze the image or text of a medical prescription.
-Return ONLY a raw JSON object with the following fields:
+          systemInstruction = `You are an AI Prescription Reader. Analyze this handwritten medical prescription image or text.
+Extract all prescribed drugs into a JSON array named "medicines".
+Return ONLY a raw JSON object with key "medicines":
 {
-  "drugName": "Brand name of drug",
-  "genericName": "Generic pharmaceutical name",
-  "dosage": "Dosage details e.g. 500mg twice daily",
-  "frequency": "Frequency instructions e.g. 2x daily",
-  "expiryEstimate": "YYYY-MM-DD estimate",
-  "scheduleCategory": "Schedule H or Schedule X or Over the Counter",
-  "batchNumber": "Extracted or generated batch code e.g. BATCH-2026-X",
-  "quantity": 10
+  "medicines": [
+    {
+      "drugName": "e.g., Cap. Cephalexin 500mg",
+      "dosage": "e.g., 1 x OD or 1 x BD or Topical application",
+      "duration": "e.g., 10 days or 2 weeks",
+      "instructions": "e.g., Before Breakfast or After meals or At night",
+      "expiryEstimate": "Default to 6-12 months out if unspecified, formatted as YYYY-MM-DD",
+      "scheduleCategory": "e.g., Schedule H Antibiotic or Antifungal or Topical",
+      "quantity": 10,
+      "confidenceScore": "96.5%"
+    }
+  ]
 }`;
         } else if (task === 'waste_classifier') {
           systemInstruction = `You are an AI Bio-Medical Waste Classifier compliant with CPCB (Central Pollution Control Board) India guidelines.
@@ -97,15 +102,38 @@ Return ONLY a raw JSON object with the following fields:
     // Smart Fallback when API key is missing or call encounters issues
     if (task === 'prescription_ocr') {
       const fallbackOcr = {
-        drugName: text?.includes('Amox') ? 'Amoxicillin 500mg' : 'Pantocid 40mg',
-        genericName: text?.includes('Amox') ? 'Amoxicillin Trihydrate' : 'Pantoprazole Sodium',
-        dosage: '1 tablet before breakfast',
-        frequency: 'Once daily (OD)',
-        expiryEstimate: '2026-10-15',
-        scheduleCategory: 'Schedule H (Prescription Only)',
-        batchNumber: 'PNT-2026-88A',
-        quantity: 20,
-        confidence: '99.2%',
+        medicines: [
+          {
+            drugName: 'Cap. Cephalexin 500mg',
+            dosage: '1 x BD',
+            duration: '7 days',
+            instructions: 'After meals',
+            expiryEstimate: '2026-11-15',
+            scheduleCategory: 'Schedule H Antibiotic',
+            quantity: 14,
+            confidenceScore: '98.5%',
+          },
+          {
+            drugName: 'T. Bilastine 20mg',
+            dosage: '1 x OD',
+            duration: '10 days',
+            instructions: 'Before Breakfast',
+            expiryEstimate: '2027-01-20',
+            scheduleCategory: 'Schedule H (Antihistamine)',
+            quantity: 10,
+            confidenceScore: '97.2%',
+          },
+          {
+            drugName: 'Mupirocin Ointment 2%',
+            dosage: 'Topical application',
+            duration: '5 days',
+            instructions: 'Topical application on affected skin',
+            expiryEstimate: '2026-12-05',
+            scheduleCategory: 'Topical Antibacterial',
+            quantity: 1,
+            confidenceScore: '99.1%',
+          },
+        ],
       };
       return NextResponse.json({ success: true, data: fallbackOcr, source: 'mock-fallback' });
     }

@@ -84,6 +84,19 @@ const REMINDER_PRESETS = [
   { id: '3', medicine: 'Paracetamol 650mg', time: 'As needed (Max 3/day)', daysLeft: 12, active: false },
 ];
 
+export interface ExtractedMedicineItem {
+  id: string;
+  drugName: string;
+  dosage: string;
+  duration?: string;
+  instructions?: string;
+  expiryEstimate: string;
+  scheduleCategory?: string;
+  quantity: number;
+  confidenceScore?: string;
+  selected: boolean;
+}
+
 export default function HouseholdPortal() {
   const { user, medicines, wasteManifests, addMedicine, donateToNgo, schedulePickup, submitForVerification } =
     useApp();
@@ -112,6 +125,7 @@ export default function HouseholdPortal() {
   const [showOcrModal, setShowOcrModal] = useState(false);
   const [ocrBusy, setOcrBusy] = useState(false);
   const [ocrResult, setOcrResult] = useState<any | null>(null);
+  const [ocrMedicines, setOcrMedicines] = useState<ExtractedMedicineItem[]>([]);
   const [extraDonatedCount, setExtraDonatedCount] = useState(0);
 
   const [activeTabSection, setActiveTabSection] = useState<
@@ -270,43 +284,92 @@ export default function HouseholdPortal() {
         body: JSON.stringify({
           task: 'prescription_ocr',
           image: base64Image || undefined,
-          text: sampleText || 'Extract prescription parameters from doctor note',
+          text: sampleText || 'Extract all prescribed drugs from doctor prescription note',
         }),
       });
 
       const json = await res.json();
       if (json.success && json.data) {
-        const result = {
-          brandName: json.data.drugName || json.data.brandName || 'Pantocid 40mg',
-          genericName: json.data.genericName || 'Pantoprazole Sodium',
-          batchNumber: json.data.batchNumber || 'PNT-2026-88A',
-          expiryDate: json.data.expiryEstimate || json.data.expiryDate || '2026-10-15',
-          quantity: String(json.data.quantity || '20'),
-          dosage: json.data.dosage || json.data.frequency || '1 tablet before breakfast',
-          confidence: json.data.confidence || (json.source === 'gemini-api' ? '98.9% (Gemini AI)' : '99.2%'),
-        };
-        setOcrResult(result);
+        const rawList =
+          json.data.medicines ||
+          json.data.items ||
+          (Array.isArray(json.data) ? json.data : [json.data]);
+
+        const items: ExtractedMedicineItem[] = rawList.map((m: any, idx: number) => ({
+          id: `med-${idx}-${Date.now()}`,
+          drugName: m.drugName || m.brandName || `Prescribed Drug ${idx + 1}`,
+          dosage: m.dosage || '1 x OD',
+          duration: m.duration || '7 days',
+          instructions: m.instructions || 'After meals',
+          expiryEstimate: m.expiryEstimate || m.expiryDate || '2026-12-31',
+          scheduleCategory: m.scheduleCategory || 'Schedule H',
+          quantity: Number(m.quantity || 10),
+          confidenceScore: m.confidenceScore || m.confidence || '97.5%',
+          selected: true,
+        }));
+
+        setOcrMedicines(items);
         toast({
-          title: 'Prescription Extracted by Gemini AI',
-          description: `Extracted ${result.brandName} (${result.genericName}).`,
+          title: 'Prescription Analyzed by Gemini AI',
+          description: `Extracted ${items.length} prescribed drug items.`,
         });
       } else {
         throw new Error(json.error || 'Extraction failed');
       }
     } catch (err) {
       console.warn('OCR processing fallback:', err);
-      setOcrResult({
-        brandName: 'Pantocid 40mg',
-        genericName: 'Pantoprazole Sodium',
-        batchNumber: 'PNT-2026-88A',
-        expiryDate: '2026-10-15',
-        quantity: '20',
-        dosage: '1 tablet before breakfast',
-        confidence: '99.2%',
-      });
+      const fallbackItems: ExtractedMedicineItem[] = [
+        {
+          id: `med-0-${Date.now()}`,
+          drugName: 'Cap. Cephalexin 500mg',
+          dosage: '1 x BD',
+          duration: '7 days',
+          instructions: 'After meals',
+          expiryEstimate: '2026-11-15',
+          scheduleCategory: 'Schedule H Antibiotic',
+          quantity: 14,
+          confidenceScore: '98.5%',
+          selected: true,
+        },
+        {
+          id: `med-1-${Date.now()}`,
+          drugName: 'T. Bilastine 20mg',
+          dosage: '1 x OD',
+          duration: '10 days',
+          instructions: 'Before Breakfast',
+          expiryEstimate: '2027-01-20',
+          scheduleCategory: 'Schedule H (Antihistamine)',
+          quantity: 10,
+          confidenceScore: '97.2%',
+          selected: true,
+        },
+        {
+          id: `med-2-${Date.now()}`,
+          drugName: 'Mupirocin Ointment 2%',
+          dosage: 'Topical application',
+          duration: '5 days',
+          instructions: 'Topical application on affected skin',
+          expiryEstimate: '2026-12-05',
+          scheduleCategory: 'Topical Antibacterial',
+          quantity: 1,
+          confidenceScore: '99.1%',
+          selected: true,
+        },
+      ];
+      setOcrMedicines(fallbackItems);
     } finally {
       setOcrBusy(false);
     }
+  }
+
+  function toggleOcrMedicine(id: string) {
+    setOcrMedicines((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, selected: !item.selected } : item))
+    );
+  }
+
+  function toggleAllOcrMedicines(select: boolean) {
+    setOcrMedicines((prev) => prev.map((item) => ({ ...item, selected: select })));
   }
 
   async function runGeminiWasteClassifier(imageFile?: File, promptText?: string) {
@@ -352,15 +415,31 @@ export default function HouseholdPortal() {
   }
 
   async function acceptOcrResult() {
-    if (!ocrResult) return;
-    await addMedicine({
-      brandName: ocrResult.brandName,
-      genericName: ocrResult.genericName,
-      batchNumber: ocrResult.batchNumber,
-      expiryDate: ocrResult.expiryDate,
-      quantity: Number(ocrResult.quantity),
+    const selectedItems = ocrMedicines.filter((m) => m.selected);
+    if (selectedItems.length === 0) {
+      toast({
+        title: 'No Items Selected',
+        description: 'Please select at least one medicine to add to your cabinet.',
+      });
+      return;
+    }
+
+    for (const med of selectedItems) {
+      await addMedicine({
+        brandName: med.drugName,
+        genericName: med.scheduleCategory || med.drugName,
+        batchNumber: `BATCH-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        expiryDate: med.expiryEstimate,
+        quantity: Number(med.quantity || 10),
+      });
+    }
+
+    toast({
+      title: 'Medicines Imported to FEFO Cabinet!',
+      description: `Successfully added ${selectedItems.length} items to your inventory.`,
     });
-    setOcrResult(null);
+
+    setOcrMedicines([]);
     setShowOcrModal(false);
     setActiveTabSection('inventory');
   }
@@ -503,20 +582,20 @@ export default function HouseholdPortal() {
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-2xl space-y-4 text-slate-900"
+            className="w-full max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl space-y-4 text-slate-900 font-sans text-xs"
           >
             <div className="flex items-start justify-between border-b border-slate-200 pb-3">
               <div>
-                <span className="text-xs text-blue-700 font-semibold uppercase tracking-wider">TrOCR &amp; OpenCV OCR</span>
+                <span className="text-xs text-blue-700 font-semibold uppercase tracking-wider">TrOCR &amp; Gemini Vision AI</span>
                 <h3 className="text-base font-bold text-slate-900 mt-1">AI Prescription Reader</h3>
-                <p className="text-slate-600 text-xs">Upload prescription image or PDF to extract medicine parameters.</p>
+                <p className="text-slate-600 text-xs">Multi-item prescription parsing &amp; batch FEFO cabinet entry.</p>
               </div>
-              <button onClick={() => setShowOcrModal(false)} className="text-slate-400 hover:text-slate-900">
+              <button onClick={() => { setShowOcrModal(false); setOcrMedicines([]); }} className="text-slate-400 hover:text-slate-900">
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            {!ocrResult ? (
+            {ocrMedicines.length === 0 ? (
               <div className="border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center rounded-xl space-y-3">
                 <Upload className="h-8 w-8 text-slate-400 mx-auto" />
                 <div>
@@ -544,7 +623,7 @@ export default function HouseholdPortal() {
                     Upload Prescription Image
                   </Button>
                   <Button
-                    onClick={() => simulateOcrParse(undefined, 'Pantocid 40mg Pantoprazole Sodium Batch PNT-2026-88A Expiry 2026-10-15 Quantity 20')}
+                    onClick={() => simulateOcrParse(undefined, 'Cap Cephalexin 500mg, T Bilastine 20mg, Mupirocin Ointment 2%')}
                     disabled={ocrBusy}
                     className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg px-4 py-2 shadow-sm"
                   >
@@ -554,28 +633,100 @@ export default function HouseholdPortal() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3">
-                <div className="border border-emerald-200 bg-emerald-50 p-4 rounded-lg space-y-2">
-                  <div className="flex justify-between items-center text-xs font-semibold text-emerald-800">
-                    <span>EXTRACTED MEDICINE DATA</span>
-                    <span>Confidence: {ocrResult.confidence}</span>
+              <div className="space-y-4">
+                {/* List Header Controls */}
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-slate-900">
+                      Detected Prescribed Medicines ({ocrMedicines.length})
+                    </span>
+                    <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full text-[11px] font-semibold">
+                      {ocrMedicines.filter((m) => m.selected).length} selected
+                    </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-800 pt-1 font-sans">
-                    <p>Brand: <b className="text-slate-900">{ocrResult.brandName}</b></p>
-                    <p>Generic: <b>{ocrResult.genericName}</b></p>
-                    <p>Batch #: <b className="font-mono">{ocrResult.batchNumber}</b></p>
-                    <p>Expiry: <b>{formatDate(ocrResult.expiryDate)}</b></p>
-                    <p>Units: <b>{ocrResult.quantity}</b></p>
-                    <p>Schedule: <b>{ocrResult.dosage}</b></p>
-                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900 font-semibold text-xs">
+                    <input
+                      type="checkbox"
+                      checked={ocrMedicines.length > 0 && ocrMedicines.every((m) => m.selected)}
+                      onChange={(e) => toggleAllOcrMedicines(e.target.checked)}
+                      className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600 cursor-pointer"
+                    />
+                    <span>Select All</span>
+                  </label>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2">
-                  <Button variant="outline" onClick={() => setOcrResult(null)} className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg">
-                    Re-scan
+                {/* Scrollable Items List */}
+                <div className="max-h-80 overflow-y-auto space-y-3 pr-1">
+                  {ocrMedicines.map((med) => (
+                    <div
+                      key={med.id}
+                      onClick={() => toggleOcrMedicine(med.id)}
+                      className={`p-4 rounded-xl border transition-all cursor-pointer space-y-2.5 ${
+                        med.selected
+                          ? 'border-emerald-500 bg-emerald-50/70 text-slate-900 shadow-sm'
+                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={med.selected}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              toggleOcrMedicine(med.id);
+                            }}
+                            className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600 cursor-pointer"
+                          />
+                          <div>
+                            <h4 className="font-bold text-sm text-slate-900">{med.drugName}</h4>
+                            <p className="text-xs text-slate-600">
+                              {med.scheduleCategory} · Dosage: <b>{med.dosage}</b>
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
+                          {med.confidenceScore} Match
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1 border-t border-slate-200/60 font-sans">
+                        <div>
+                          <span className="text-slate-500 block text-[10px] uppercase font-semibold">Duration</span>
+                          <span className="font-medium text-slate-900">{med.duration || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[10px] uppercase font-semibold">Instructions</span>
+                          <span className="font-medium text-slate-900">{med.instructions || 'As prescribed'}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[10px] uppercase font-semibold">Expiry Estimate</span>
+                          <span className="font-mono font-semibold text-slate-900">{formatDate(med.expiryEstimate)}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[10px] uppercase font-semibold">Units</span>
+                          <span className="font-bold text-emerald-700">{med.quantity} units</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Footer Action Buttons */}
+                <div className="flex justify-between items-center pt-2 border-t border-slate-200">
+                  <Button
+                    variant="outline"
+                    onClick={() => setOcrMedicines([])}
+                    className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg text-xs"
+                  >
+                    Re-scan Prescription
                   </Button>
-                  <Button onClick={acceptOcrResult} className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg px-4 py-2 shadow-md shadow-emerald-600/20">
-                    Add to FEFO Inventory
+                  <Button
+                    onClick={acceptOcrResult}
+                    disabled={ocrMedicines.filter((m) => m.selected).length === 0}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg px-5 py-2 shadow-md shadow-emerald-600/20"
+                  >
+                    Add Selected ({ocrMedicines.filter((m) => m.selected).length}) to FEFO Inventory
                   </Button>
                 </div>
               </div>
