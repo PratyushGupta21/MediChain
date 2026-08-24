@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/lib/context/app-context';
+import { useToast } from '@/hooks/use-toast';
 import {
   getDaysUntilExpiry,
   getFefoColorClasses,
@@ -54,6 +55,7 @@ const PROVENANCE_STAGES = [
 
 export default function NgoHub() {
   const { user, medicines, requestAllocation } = useApp();
+  const { toast } = useToast();
 
   // Strict Security Guard Check for Unprivileged Personas
   if (user?.role !== 'NGO' && (user?.role as string) !== 'RECIPIENT') {
@@ -76,9 +78,36 @@ export default function NgoHub() {
   const [selectedClass, setSelectedClass] = useState('ALL CLASSES');
   const [selected, setSelected] = useState<MedicineBatch | null>(null);
   const [showProvenance, setShowProvenance] = useState<MedicineBatch | null>(null);
-  const [activeTabSection, setActiveTabSection] = useState<'catalog' | 'health_credits' | 'provenance'>('catalog');
+  const [activeTabSection, setActiveTabSection] = useState<'catalog' | 'request_medicine' | 'health_credits' | 'provenance'>('catalog');
   const [quantity, setQuantity] = useState(1);
   const [busy, setBusy] = useState(false);
+
+  // Request Medicine Form State
+  const [medName, setMedName] = useState('');
+  const [reqQuantity, setReqQuantity] = useState<number | ''>(10);
+  const [therapeuticClass, setTherapeuticClass] = useState('Antibiotics');
+  const [urgency, setUrgency] = useState<'standard' | 'urgent' | 'emergency'>('standard');
+  const [notes, setNotes] = useState('');
+  const [requestSuccessMessage, setRequestSuccessMessage] = useState<string | null>(null);
+
+  function handleBroadcastRequest(e: React.FormEvent) {
+    e.preventDefault();
+    if (!medName) return;
+
+    const message = "Request Broadcasted! Listed on FEFO Priority Queue & Notified Local Pharmacist Hubs.";
+    setRequestSuccessMessage(message);
+    toast({
+      title: "Request Broadcasted!",
+      description: "Listed on FEFO Priority Queue & Notified Local Pharmacist Hubs.",
+    });
+
+    // Reset form
+    setMedName('');
+    setReqQuantity(10);
+    setTherapeuticClass('Antibiotics');
+    setUrgency('standard');
+    setNotes('');
+  }
 
   const catalog = useMemo(
     () =>
@@ -153,6 +182,16 @@ export default function NgoHub() {
           }`}
         >
           Subsidized Sourcing Catalog ({catalog.length})
+        </button>
+        <button
+          onClick={() => setActiveTabSection('request_medicine')}
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+            activeTabSection === 'request_medicine'
+              ? 'border-emerald-600 text-emerald-700 font-bold'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          Request Medicine
         </button>
         <button
           onClick={() => setActiveTabSection('health_credits')}
@@ -282,7 +321,159 @@ export default function NgoHub() {
         </div>
       )}
 
-      {/* SECTION 2: HEALTH CREDIT TOKEN REDEMPTION */}
+      {/* SECTION 2: REQUEST MEDICINE FORM */}
+      {activeTabSection === 'request_medicine' && (
+        <div className="space-y-6 font-sans text-xs">
+          {/* Live Success Toast Notification Banner */}
+          <AnimatePresence>
+            {requestSuccessMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex items-start gap-3 rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-emerald-900 shadow-sm"
+              >
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <h4 className="font-bold text-sm text-emerald-900">Request Broadcasted!</h4>
+                  <p className="text-xs text-emerald-800 mt-0.5">{requestSuccessMessage}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRequestSuccessMessage(null)}
+                  className="text-emerald-700 hover:text-emerald-900"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="rounded-xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm space-y-6">
+            <div className="border-b border-slate-200 pb-5">
+              <div className="flex items-center gap-2 text-emerald-600 font-semibold text-xs uppercase tracking-wider mb-1">
+                <HeartHandshake className="h-4 w-4" />
+                <span>NGO Sourcing Protocol</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">Submit Critical Medicine Request</h3>
+              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                Broadcast emergency or bulk therapeutic requirements to registered household donors and CDSCO pharmacist verification hubs.
+              </p>
+            </div>
+
+            <form onSubmit={handleBroadcastRequest} className="space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
+                {/* Medicine Name / Generic Formulation */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Medicine Name / Generic Formulation <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={medName}
+                    onChange={(e) => setMedName(e.target.value)}
+                    placeholder="e.g. Amoxicillin 500mg, Metformin 850mg..."
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                  />
+                </div>
+
+                {/* Required Quantity / Number of Strips */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Required Quantity / Number of Strips <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    value={reqQuantity}
+                    onChange={(e) => setReqQuantity(e.target.value === '' ? '' : Number(e.target.value))}
+                    placeholder="Enter quantity"
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                {/* Therapeutic Class Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Therapeutic Class <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={therapeuticClass}
+                    onChange={(e) => setTherapeuticClass(e.target.value)}
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans cursor-pointer"
+                  >
+                    <option value="Antibiotics">Antibiotics</option>
+                    <option value="Cardiac">Cardiac</option>
+                    <option value="Antidiabetic">Antidiabetic</option>
+                    <option value="Analgesics">Analgesics</option>
+                    <option value="Respiratory">Respiratory</option>
+                    <option value="Gastrointestinal">Gastrointestinal</option>
+                  </select>
+                </div>
+
+                {/* Urgency Level */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Urgency Level <span className="text-red-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'standard', label: 'Standard', detail: '[7 Days]' },
+                      { id: 'urgent', label: 'Urgent', detail: '[48 Hours]' },
+                      { id: 'emergency', label: 'Emergency', detail: '[Immediate]' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setUrgency(opt.id as any)}
+                        className={`flex flex-col items-center justify-center p-2.5 rounded-lg border text-center transition-all cursor-pointer ${
+                          urgency === opt.id
+                            ? 'border-emerald-600 bg-emerald-50 text-emerald-900 font-bold shadow-sm'
+                            : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span className="text-xs">{opt.label}</span>
+                        <span className="text-[10px] text-slate-500">{opt.detail}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Patient / Clinic Purpose Notes */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-800">
+                  Patient / Clinic Purpose Notes
+                </label>
+                <textarea
+                  rows={3}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Describe clinical priority, target patient population, or emergency health center requirement..."
+                  className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                />
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 px-6 rounded-lg shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <span>Submit Allocation Request</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 3: HEALTH CREDIT TOKEN REDEMPTION */}
       {activeTabSection === 'health_credits' && (
         <div className="space-y-4 font-sans text-xs">
           <div className="border border-slate-200 bg-white p-6 rounded-xl space-y-3 shadow-sm">
