@@ -5,6 +5,7 @@ import { Gs1CameraScanner } from '@/components/gs1-camera-scanner';
 import { ParsedGs1Data } from '@/lib/gs1-parser';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/lib/context/app-context';
+import { useToast } from '@/hooks/use-toast';
 import type { MedicineBatch } from '@/lib/types';
 import { getDaysUntilExpiry, getFefoStatus, formatDate } from '@/lib/fefo';
 import { Button } from '@/components/ui/button';
@@ -86,6 +87,7 @@ const REMINDER_PRESETS = [
 export default function HouseholdPortal() {
   const { user, medicines, wasteManifests, addMedicine, donateToNgo, schedulePickup, submitForVerification } =
     useApp();
+  const { toast } = useToast();
 
   // Strict Security Guard Check for Unprivileged Personas
   if (user?.role !== 'HOUSEHOLD') {
@@ -110,9 +112,10 @@ export default function HouseholdPortal() {
   const [showOcrModal, setShowOcrModal] = useState(false);
   const [ocrBusy, setOcrBusy] = useState(false);
   const [ocrResult, setOcrResult] = useState<any | null>(null);
+  const [extraDonatedCount, setExtraDonatedCount] = useState(0);
 
   const [activeTabSection, setActiveTabSection] = useState<
-    'inventory' | 'my_pickups' | 'ocr_reader' | 'waste_classifier' | 'reminders'
+    'inventory' | 'donate_extra' | 'my_pickups' | 'ocr_reader' | 'waste_classifier' | 'reminders'
   >('inventory');
   const [pickupTarget, setPickupTarget] = useState<MedicineBatch | null>(null);
   const [pickupAddressInput, setPickupAddressInput] = useState('');
@@ -127,6 +130,79 @@ export default function HouseholdPortal() {
     expiryDate: '',
     quantity: '',
   });
+
+  // Donate Extra Medicine Form State
+  const [donateForm, setDonateForm] = useState<{
+    brandName: string;
+    genericName: string;
+    batchNumber: string;
+    expiryDate: string;
+    quantity: number | '';
+    checklist: {
+      blister: boolean;
+      box: boolean;
+      temp: boolean;
+    };
+    photoName: string;
+  }>({
+    brandName: '',
+    genericName: '',
+    batchNumber: '',
+    expiryDate: '',
+    quantity: 5,
+    checklist: {
+      blister: true,
+      box: true,
+      temp: true,
+    },
+    photoName: '',
+  });
+  const [donateSubmitting, setDonateSubmitting] = useState(false);
+  const [donationSuccessMessage, setDonationSuccessMessage] = useState<string | null>(null);
+
+  function getMinExpiryDate() {
+    const d = new Date();
+    d.setDate(d.getDate() + 90);
+    return d.toISOString().split('T')[0];
+  }
+
+  async function handleDonationSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!donateForm.brandName || !donateForm.genericName || !donateForm.batchNumber || !donateForm.expiryDate)
+      return;
+
+    setDonateSubmitting(true);
+
+    await addMedicine({
+      brandName: donateForm.brandName,
+      genericName: donateForm.genericName,
+      batchNumber: donateForm.batchNumber,
+      expiryDate: donateForm.expiryDate,
+      quantity: Number(donateForm.quantity || 1),
+    });
+
+    setExtraDonatedCount((prev) => prev + 1);
+
+    const msg = "Donation Submitted! Batch routed to Pharmacist Verification Hub. +150 Health Credits Awarded.";
+    setDonationSuccessMessage(msg);
+    toast({
+      title: "Donation Submitted!",
+      description: "Batch routed to Pharmacist Verification Hub. +150 Health Credits Awarded.",
+    });
+
+    setDonateSubmitting(false);
+
+    // Reset form
+    setDonateForm({
+      brandName: '',
+      genericName: '',
+      batchNumber: '',
+      expiryDate: '',
+      quantity: 5,
+      checklist: { blister: true, box: true, temp: true },
+      photoName: '',
+    });
+  }
 
   const owned = medicines.filter((m) => m.ownerId === user?.id || !m.ownerId);
   const active = owned.filter((m) => m.status !== 'disposed').length;
@@ -247,12 +323,14 @@ export default function HouseholdPortal() {
             <span className="text-xs uppercase text-slate-500 font-semibold">Health Credits</span>
             <Award className="h-5 w-5 text-emerald-600" />
           </div>
-          <p className="mt-2 text-3xl font-bold text-slate-900">1,450 PTS</p>
+          <p className="mt-2 text-3xl font-bold text-slate-900">
+            {(1450 + extraDonatedCount * 150).toLocaleString()} PTS
+          </p>
           <p className="mt-1 text-xs text-emerald-700 font-bold">Gold Household Donor Tier</p>
         </div>
 
         <StatCard label="Active Cabinet Inventory" value={active} icon={Package} tone="gold" />
-        <StatCard label="Donation-Ready Batches" value={donated} icon={HeartHandshake} tone="safe" />
+        <StatCard label="Donation-Ready Batches" value={donated + extraDonatedCount} icon={HeartHandshake} tone="safe" />
         <StatCard label="Scheduled Disposals" value={scheduled} icon={Truck} tone="warning" />
       </div>
 
@@ -267,6 +345,16 @@ export default function HouseholdPortal() {
           }`}
         >
           FEFO Cabinet Inventory ({owned.length})
+        </button>
+        <button
+          onClick={() => setActiveTabSection('donate_extra')}
+          className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+            activeTabSection === 'donate_extra'
+              ? 'border-emerald-600 text-emerald-700 font-bold'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          Donate Extra Medicine
         </button>
         <button
           onClick={() => setActiveTabSection('my_pickups')}
@@ -452,6 +540,226 @@ export default function HouseholdPortal() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* SECTION: DONATE EXTRA MEDICINE FORM */}
+      {activeTabSection === 'donate_extra' && (
+        <div className="space-y-6 font-sans text-xs">
+          {/* Live Success Toast Notification Banner */}
+          <AnimatePresence>
+            {donationSuccessMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex items-start gap-3 rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-emerald-900 shadow-sm"
+              >
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <h4 className="font-bold text-sm text-emerald-900">Donation Submitted!</h4>
+                  <p className="text-xs text-emerald-800 mt-0.5">{donationSuccessMessage}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDonationSuccessMessage(null)}
+                  className="text-emerald-700 hover:text-emerald-900"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="rounded-xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm space-y-6">
+            <div className="border-b border-slate-200 pb-5">
+              <div className="flex items-center gap-2 text-emerald-600 font-semibold text-xs uppercase tracking-wider mb-1">
+                <HeartHandshake className="h-4 w-4" />
+                <span>CDSCO Verified Redistribution Protocol</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">Donate Unused Household Medicines</h3>
+              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                Submit sealed, unexpired pharmaceutical batches to licensed CDSCO verification hubs for redistribution to underfunded clinics and NGOs.
+              </p>
+            </div>
+
+            <form onSubmit={handleDonationSubmit} className="space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
+                {/* Medicine / Brand Name */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Medicine / Brand Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={donateForm.brandName}
+                    onChange={(e) => setDonateForm({ ...donateForm, brandName: e.target.value })}
+                    placeholder="e.g. Augmentin 625 Duo, Lipitor 20mg..."
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                  />
+                </div>
+
+                {/* Generic Formulation */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Generic Formulation <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={donateForm.genericName}
+                    onChange={(e) => setDonateForm({ ...donateForm, genericName: e.target.value })}
+                    placeholder="e.g. Amoxicillin + Clavulanate"
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-3">
+                {/* Batch Number */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Batch Number <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={donateForm.batchNumber}
+                    onChange={(e) => setDonateForm({ ...donateForm, batchNumber: e.target.value })}
+                    placeholder="e.g. BATCH-2026-X"
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-mono"
+                  />
+                </div>
+
+                {/* Expiration Date */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Expiration Date <span className="text-red-500">*</span>
+                    <span className="text-[10px] text-emerald-700 font-normal ml-1">(Must be &gt; 90 days out)</span>
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    min={getMinExpiryDate()}
+                    value={donateForm.expiryDate}
+                    onChange={(e) => setDonateForm({ ...donateForm, expiryDate: e.target.value })}
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                  />
+                </div>
+
+                {/* Quantity / Number of Unopened Strips */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Quantity / Number of Unopened Strips <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    value={donateForm.quantity}
+                    onChange={(e) => setDonateForm({ ...donateForm, quantity: e.target.value === '' ? '' : Number(e.target.value) })}
+                    placeholder="e.g. 5"
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                  />
+                </div>
+              </div>
+
+              {/* Packaging Condition Checklist */}
+              <div className="space-y-2 pt-1">
+                <label className="block text-xs font-semibold text-slate-800">
+                  Packaging Condition Checklist <span className="text-red-500">*</span>
+                </label>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  {[
+                    { id: 'blister', label: 'Sealed Foil Blister Intact' },
+                    { id: 'box', label: 'Original Box Retained' },
+                    { id: 'temp', label: 'Stored Below 25°C' },
+                  ].map((item) => (
+                    <label
+                      key={item.id}
+                      className={`flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-all ${
+                        donateForm.checklist[item.id as keyof typeof donateForm.checklist]
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-900 font-medium'
+                          : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={donateForm.checklist[item.id as keyof typeof donateForm.checklist]}
+                        onChange={(e) =>
+                          setDonateForm({
+                            ...donateForm,
+                            checklist: {
+                              ...donateForm.checklist,
+                              [item.id]: e.target.checked,
+                            },
+                          })
+                        }
+                        className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600 cursor-pointer"
+                      />
+                      <span className="text-xs">{item.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Upload Packaging Photo */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-800">
+                  Upload Packaging Photo <span className="text-slate-400 font-normal">(Front &amp; Back GS1 Barcode)</span>
+                </label>
+                <div
+                  onClick={() => document.getElementById('photo-upload-input')?.click()}
+                  className="border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/50 transition-all p-5 text-center rounded-xl cursor-pointer space-y-2"
+                >
+                  <input
+                    id="photo-upload-input"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setDonateForm({ ...donateForm, photoName: file.name });
+                      }
+                    }}
+                  />
+                  <Upload className="h-6 w-6 text-emerald-600 mx-auto" />
+                  <div>
+                    {donateForm.photoName ? (
+                      <p className="font-bold text-emerald-700 text-xs flex items-center justify-center gap-1.5">
+                        <CheckCircle2 className="h-4 w-4" /> Selected: {donateForm.photoName}
+                      </p>
+                    ) : (
+                      <>
+                        <p className="font-bold text-slate-800 text-xs">Drop packaging image or click to upload</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">JPEG, PNG or WEBP (Max 10MB)</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  disabled={donateSubmitting}
+                  className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 px-6 rounded-lg shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  {donateSubmitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <span>Submit Batch for CDSCO Verification</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
