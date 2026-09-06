@@ -67,16 +67,16 @@ export default function LandingHero({
       {/* Sleek Modern Hero Section */}
       <section className="relative z-10 mx-auto max-w-[1440px] px-6 py-16 md:px-8 lg:py-24">
         <div className="max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-800">
-            <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/40 px-3.5 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+            <span className="h-2 w-2 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />
             LIVE PROTOCOL · REGULATORY COMPLIANT
           </div>
 
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl leading-tight">
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl leading-tight">
             Decentralized Pharmaceutical Traceability &amp; Waste Telemetry
           </h1>
 
-          <p className="text-base text-slate-700 sm:text-lg leading-relaxed font-sans">
+          <p className="text-base text-slate-700 dark:text-slate-300 sm:text-lg leading-relaxed font-sans">
             MediChain enforces Rule 96 CDSCO verification, FEFO expiry redistribution, and high-temperature bio-hazard incineration on the Polygon Amoy blockchain ledger.
           </p>
 
@@ -93,7 +93,7 @@ export default function LandingHero({
               size="lg"
               variant="outline"
               onClick={onOpenProofs}
-              className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg px-6 py-3 text-sm font-semibold shadow-sm"
+              className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 px-6 py-3 text-sm font-semibold shadow-sm"
             >
               View Architecture Proofs
             </Button>
@@ -103,9 +103,9 @@ export default function LandingHero({
 
       {/* Platform Architecture Grid */}
       <section className="relative z-10 mx-auto max-w-[1440px] px-6 py-8 md:px-8">
-        <div className="border-b border-slate-200 pb-4 mb-8">
-          <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Chain of Custody Protocol</p>
-          <h2 className="text-2xl font-bold text-slate-900 mt-1">Platform Hub Architecture</h2>
+        <div className="border-b border-slate-200 dark:border-slate-800 pb-4 mb-8">
+          <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Chain of Custody Protocol</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">Platform Hub Architecture</h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 font-sans">
@@ -116,20 +116,20 @@ export default function LandingHero({
                 key={step.step}
                 whileHover={{ y: -3 }}
                 onClick={() => onNavigate(step.tab)}
-                className="cursor-pointer rounded-xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between hover:border-slate-400 transition-all"
+                className="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 shadow-sm flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-600 transition-all"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50 border border-slate-200 text-slate-800">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">
                       <Icon className="h-5 w-5" style={{ color: step.color }} />
                     </div>
-                    <span className="text-xs font-mono font-bold text-slate-500">[{step.step}]</span>
+                    <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">[{step.step}]</span>
                   </div>
-                  <h3 className="font-bold text-base text-slate-900">{step.title}</h3>
-                  <p className="mt-1 text-xs text-slate-500 font-medium">{step.role}</p>
-                  <p className="mt-3 text-xs text-slate-600 leading-relaxed">{step.desc}</p>
+                  <h3 className="font-bold text-base text-slate-900 dark:text-white">{step.title}</h3>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium">{step.role}</p>
+                  <p className="mt-3 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{step.desc}</p>
                 </div>
-                <div className="mt-6 flex items-center text-xs font-bold text-emerald-700 group">
+                <div className="mt-6 flex items-center text-xs font-bold text-emerald-700 dark:text-emerald-400 group">
                   <span>Access Module</span>
                   <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </div>
@@ -141,3 +141,4 @@ export default function LandingHero({
     </div>
   );
 }
+

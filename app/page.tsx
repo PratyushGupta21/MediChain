@@ -11,6 +11,7 @@ import {
   ChevronDown,
   LogOut,
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import SwissWaveCanvas from '@/components/SwissWaveCanvas';
 import LandingHero from '@/components/LandingHero';
 import AuthModal from '@/components/auth-modal';
@@ -58,7 +59,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-white text-slate-900 font-sans selection:bg-emerald-600 selection:text-white">
+    <div className="relative min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans selection:bg-emerald-600 selection:text-white transition-colors duration-200">
       <AuthModal />
       <CdscoModal open={cdscoOpen} onClose={() => setCdscoOpen(false)} />
       <Eip712Modal open={eip712Open} onClose={() => setEip712Open(false)} />
@@ -68,15 +69,15 @@ export default function Home() {
       <SwissWaveCanvas />
 
       {/* Top Navigation Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md font-sans">
+      <header className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md font-sans">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2.5 group">
               <div className="flex h-8 w-8 items-center justify-center bg-emerald-600 text-white font-bold text-sm rounded-lg shadow-sm">
                 MC
               </div>
-              <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">
-                MEDI<span className="text-emerald-600">CHAIN</span>
+              <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white font-sans">
+                MEDI<span className="text-emerald-600 dark:text-emerald-400">CHAIN</span>
               </span>
             </Link>
           </div>
@@ -97,7 +98,7 @@ export default function Home() {
                   className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
                     active
                       ? 'bg-emerald-600 text-white font-bold shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900 bg-transparent'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-transparent'
                   }`}
                 >
                   {tab.label}
@@ -109,14 +110,16 @@ export default function Home() {
           <div className="flex items-center gap-3 font-sans">
             {/* Role Badge */}
             {user && (
-              <div className="hidden border border-amber-200 bg-amber-50 px-3 py-1 text-xs text-amber-800 font-semibold sm:block rounded-full">
+              <div className="hidden border border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/40 px-3 py-1 text-xs text-amber-800 dark:text-amber-300 font-semibold sm:block rounded-full">
                 ROLE: {ROLE_DISPLAY_NAMES[user.role] ?? user.role}
               </div>
             )}
 
+            <ThemeToggle />
+
             {user ? (
               <div className="group relative">
-                <button className="flex items-center gap-2.5 border border-slate-200 bg-white px-3.5 py-1.5 text-left hover:border-slate-400 text-xs rounded-lg font-sans shadow-sm">
+                <button className="flex items-center gap-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-1.5 text-left hover:border-slate-400 dark:hover:border-slate-600 text-xs rounded-lg font-sans shadow-sm">
                   <div
                     className="flex h-6 w-6 items-center justify-center font-bold text-white rounded-md text-xs"
                     style={{ backgroundColor: user.avatarColor || '#10B981' }}
@@ -124,12 +127,12 @@ export default function Home() {
                     {user.name.split(' ').map((n) => n[0]).join('')}
                   </div>
                   <div className="hidden sm:block">
-                    <p className="font-semibold text-slate-900">{user.name}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{user.name}</p>
                   </div>
-                  <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-500" />
+                  <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                 </button>
-                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-slate-200 bg-white p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 text-xs rounded-lg font-sans">
-                  <div className="border-b border-slate-200 pb-2 mb-1 px-3 pt-2 text-[11px] text-amber-800 font-semibold">
+                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 text-xs rounded-lg font-sans">
+                  <div className="border-b border-slate-200 dark:border-slate-700 pb-2 mb-1 px-3 pt-2 text-[11px] text-amber-800 dark:text-amber-400 font-semibold">
                     ROLE: {user.role}
                   </div>
                   <button
@@ -137,7 +140,7 @@ export default function Home() {
                       await signOut();
                       setAuthOpen(true);
                     }}
-                    className="flex w-full items-center gap-2 border border-transparent p-2 text-left text-slate-700 hover:bg-slate-100 hover:text-slate-900 font-medium rounded-md"
+                    className="flex w-full items-center gap-2 border border-transparent p-2 text-left text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white font-medium rounded-md"
                   >
                     <LogOut className="h-4 w-4" />
                     Sign Out
@@ -167,3 +170,4 @@ export default function Home() {
     </div>
   );
 }
+

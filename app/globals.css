@@ -31,6 +31,32 @@
     --warning: 38 92% 50%;             /* Amber #D97706 */
     --hazard: 0 84% 60%;               /* Crimson #DC2626 */
   }
+
+  .dark {
+    --background: 222 47% 11%;         /* Deep Slate #0F172A */
+    --foreground: 210 40% 98%;          /* Crisp White / Slate-50 #F8FAFC */
+    --card: 215 28% 17%;               /* Dark Slate #1E293B */
+    --card-foreground: 210 40% 98%;
+    --popover: 215 28% 17%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 160 84% 39%;            /* Vibrant Emerald Green #10B981 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 23.5%;       /* Dark Border Slate-700 #334155 */
+    --input: 217.2 32.6% 23.5%;
+    --ring: 160 84% 39%;
+
+    --safe: 160 84% 39%;
+    --warning: 38 92% 50%;
+    --hazard: 0 84% 60%;
+  }
 }
 
 @layer base {
@@ -38,7 +64,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-white text-slate-900 font-sans antialiased;
+    @apply bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
     letter-spacing: -0.01em;
   }
@@ -62,3 +88,15 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
 }
+
+.dark ::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+

@@ -143,42 +143,42 @@ export default function NgoHub() {
 
       {/* Health Credits Summary Banner */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="border border-slate-200 bg-white p-5 text-xs font-sans rounded-xl shadow-sm">
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 text-xs font-sans rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs uppercase text-slate-500 font-semibold">Health Credit Balance</span>
-            <Award className="h-5 w-5 text-emerald-600" />
+            <span className="text-xs uppercase text-slate-500 dark:text-slate-400 font-semibold">Health Credit Balance</span>
+            <Award className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="mt-2 text-3xl font-bold text-slate-900">1,450 PTS</p>
-          <p className="mt-1 text-xs text-emerald-700 font-bold">Gold NGO Tier · 150 pts per batch</p>
+          <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">1,450 PTS</p>
+          <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400 font-bold">Gold NGO Tier · 150 pts per batch</p>
         </div>
 
-        <div className="border border-slate-200 bg-white p-5 text-xs font-sans rounded-xl shadow-sm">
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 text-xs font-sans rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs uppercase text-slate-500 font-semibold">Available Batches</span>
-            <Boxes className="h-5 w-5 text-emerald-600" />
+            <span className="text-xs uppercase text-slate-500 dark:text-slate-400 font-semibold">Available Batches</span>
+            <Boxes className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="mt-2 text-3xl font-bold text-slate-900">{catalog.length}</p>
-          <p className="mt-1 text-xs text-emerald-700 font-bold">100% CDSCO Verified</p>
+          <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">{catalog.length}</p>
+          <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400 font-bold">100% CDSCO Verified</p>
         </div>
 
-        <div className="border border-slate-200 bg-white p-5 text-xs font-sans rounded-xl shadow-sm">
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 text-xs font-sans rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs uppercase text-slate-500 font-semibold">Dispatch Rate</span>
-            <TrendingUp className="h-5 w-5 text-emerald-600" />
+            <span className="text-xs uppercase text-slate-500 dark:text-slate-400 font-semibold">Dispatch Rate</span>
+            <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="mt-2 text-3xl font-bold text-slate-900">94.2%</p>
-          <p className="mt-1 text-xs text-slate-600 font-medium">FEFO Re-Allocation Efficiency</p>
+          <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">94.2%</p>
+          <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 font-medium">FEFO Re-Allocation Efficiency</p>
         </div>
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-200 text-xs font-sans overflow-x-auto">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 text-xs font-sans overflow-x-auto">
         <button
           onClick={() => setActiveTabSection('catalog')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'catalog'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Subsidized Sourcing Catalog ({catalog.length})
@@ -187,8 +187,8 @@ export default function NgoHub() {
           onClick={() => setActiveTabSection('request_medicine')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'request_medicine'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Request Medicine
@@ -197,8 +197,8 @@ export default function NgoHub() {
           onClick={() => setActiveTabSection('health_credits')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'health_credits'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Health Credit Token Redemption
@@ -207,8 +207,8 @@ export default function NgoHub() {
           onClick={() => setActiveTabSection('provenance')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'provenance'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           QR Origin Provenance Timeline
@@ -220,31 +220,32 @@ export default function NgoHub() {
         <div className="space-y-4 font-sans text-xs">
           <div className="flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search brand, generic name, or batch number..."
-                className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-4 text-xs text-slate-900 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-3 pl-10 pr-4 text-xs text-slate-900 dark:text-slate-100 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
               />
             </div>
             
             {/* Therapeutic Class Filter Dropdown */}
-            <div className="flex items-center gap-2 border border-slate-300 bg-white rounded-lg px-3 py-2 text-xs font-sans">
-              <Filter className="h-3.5 w-3.5 text-emerald-600" />
+            <div className="flex items-center gap-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-xs font-sans">
+              <Filter className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
               <select
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
-                className="bg-transparent outline-none text-slate-800 font-semibold cursor-pointer"
+                className="bg-transparent outline-none text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
               >
                 {THERAPEUTIC_CLASSES.map((cls) => (
-                  <option key={cls} value={cls}>
+                  <option key={cls} value={cls} className="dark:bg-slate-800 dark:text-slate-100">
                     {cls}
                   </option>
                 ))}
               </select>
             </div>
           </div>
+
 
           {catalog.length === 0 ? (
             <EmptyState

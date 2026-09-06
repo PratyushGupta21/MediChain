@@ -487,15 +487,15 @@ export default function HouseholdPortal() {
 
       {/* Health Credits & Cabinet Summary Stats */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm font-sans">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 shadow-sm font-sans">
           <div className="flex justify-between items-start">
-            <span className="text-xs uppercase text-slate-500 font-semibold">Health Credits</span>
-            <Award className="h-5 w-5 text-emerald-600" />
+            <span className="text-xs uppercase text-slate-500 dark:text-slate-400 font-semibold">Health Credits</span>
+            <Award className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="mt-2 text-3xl font-bold text-slate-900">
+          <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">
             {(1450 + extraDonatedCount * 150).toLocaleString()} PTS
           </p>
-          <p className="mt-1 text-xs text-emerald-700 font-bold">Gold Household Donor Tier</p>
+          <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400 font-bold">Gold Household Donor Tier</p>
         </div>
 
         <StatCard label="Active Cabinet Inventory" value={active} icon={Package} tone="gold" />
@@ -504,13 +504,13 @@ export default function HouseholdPortal() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-200 text-xs font-sans overflow-x-auto">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 text-xs font-sans overflow-x-auto">
         <button
           onClick={() => setActiveTabSection('inventory')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'inventory'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           FEFO Cabinet Inventory ({owned.length})
@@ -519,8 +519,8 @@ export default function HouseholdPortal() {
           onClick={() => setActiveTabSection('donate_extra')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'donate_extra'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Donate Extra Medicine
@@ -529,8 +529,8 @@ export default function HouseholdPortal() {
           onClick={() => setActiveTabSection('my_pickups')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'my_pickups'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           My Waste Pickup Status ({householdPickups.length})
@@ -539,8 +539,8 @@ export default function HouseholdPortal() {
           onClick={() => setActiveTabSection('ocr_reader')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'ocr_reader'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           AI Prescription Reader (TrOCR)
@@ -549,8 +549,8 @@ export default function HouseholdPortal() {
           onClick={() => setActiveTabSection('waste_classifier')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'waste_classifier'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           AI Waste Classifier (MobileNet V2)
@@ -559,13 +559,14 @@ export default function HouseholdPortal() {
           onClick={() => setActiveTabSection('reminders')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'reminders'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Expiry Reminders ({reminders.filter((r) => r.active).length})
         </button>
       </div>
+
 
       {/* GS1 Live Scanner Modal */}
       {showAiModal && (

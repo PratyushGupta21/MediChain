@@ -141,13 +141,13 @@ export default function WasteCollectorModule() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-200 text-xs font-sans overflow-x-auto">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 text-xs font-sans overflow-x-auto">
         <button
           onClick={() => setActiveTabSection('manifests')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'manifests'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Color-Coded Manifests ({wasteManifests.length})
@@ -156,8 +156,8 @@ export default function WasteCollectorModule() {
           onClick={() => setActiveTabSection('routes')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'routes'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Geo-Fenced Routes
@@ -166,8 +166,8 @@ export default function WasteCollectorModule() {
           onClick={() => setActiveTabSection('telemetry')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'telemetry'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           850°C Incineration Telemetry
@@ -180,17 +180,18 @@ export default function WasteCollectorModule() {
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-lg rounded-xl border border-red-200 bg-white p-6 shadow-2xl font-sans text-xs space-y-4 text-slate-900"
+            className="w-full max-w-lg rounded-xl border border-red-200 dark:border-red-900/50 bg-white dark:bg-slate-800 p-6 shadow-2xl font-sans text-xs space-y-4 text-slate-900 dark:text-slate-100"
           >
-            <div className="flex items-start justify-between border-b border-slate-200 pb-3">
+            <div className="flex items-start justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
               <div>
-                <span className="text-xs text-red-700 font-semibold uppercase tracking-wider">Sealed Handoff Protocol</span>
-                <h3 className="text-base font-bold text-slate-900 mt-1">Multi-Party Custody Handoff</h3>
+                <span className="text-xs text-red-700 dark:text-red-400 font-semibold uppercase tracking-wider">Sealed Handoff Protocol</span>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mt-1">Multi-Party Custody Handoff</h3>
               </div>
-              <button onClick={() => setShowHandoffModal(false)} className="text-slate-400 hover:text-slate-900">
+              <button onClick={() => setShowHandoffModal(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white">
                 <X className="h-4 w-4" />
               </button>
             </div>
+
 
             <div className="space-y-3 text-xs font-sans">
               <div className={`border p-3 rounded-lg ${handoffStep >= 1 ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>

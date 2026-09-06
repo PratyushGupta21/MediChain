@@ -138,30 +138,30 @@ export default function PharmacistHub() {
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm font-sans">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Awaiting Verification</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{pendingList.length}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 shadow-sm font-sans">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Awaiting Verification</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{pendingList.length}</p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm font-sans">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">CDSCO Rule 96 Passed</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-emerald-700">100%</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 shadow-sm font-sans">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">CDSCO Rule 96 Passed</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-emerald-700 dark:text-emerald-400">100%</p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm font-sans">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Subsidized Marketplace Vault</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{approvedList.length}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 shadow-sm font-sans">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Subsidized Marketplace Vault</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{approvedList.length}</p>
         </div>
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-slate-200 text-xs font-sans overflow-x-auto">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 text-xs font-sans overflow-x-auto">
         <button
           onClick={() => setActiveTabSection('verification')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'verification'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Inspection Queue ({pendingList.length})
@@ -170,8 +170,8 @@ export default function PharmacistHub() {
           onClick={() => setActiveTabSection('blister_inspection')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'blister_inspection'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Blister Packaging Audit Tool
@@ -180,8 +180,8 @@ export default function PharmacistHub() {
           onClick={() => setActiveTabSection('subsidized_catalog')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'subsidized_catalog'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Subsidized Marketplace ({approvedList.length})
@@ -190,13 +190,14 @@ export default function PharmacistHub() {
           onClick={() => setActiveTabSection('cdsco_panel')}
           className={`py-3 px-5 font-semibold transition-colors border-b-2 whitespace-nowrap ${
             activeTabSection === 'cdsco_panel'
-              ? 'border-emerald-600 text-emerald-700 font-bold'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           Rule 96 Guardrails
         </button>
       </div>
+
 
       {/* GS1 Scanner Modal */}
       {showScanModal && (

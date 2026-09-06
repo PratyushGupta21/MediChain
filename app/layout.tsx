@@ -1,7 +1,9 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { AppProvider } from '@/lib/context/app-context';
+import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { BackToTop } from '@/components/ui/BackToTop';
 
 export const metadata: Metadata = {
   title: 'MediChain — FEFO Pharmaceutical Tracking & Bio-Medical Waste Lifecycle',
@@ -22,13 +24,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="font-sans bg-background text-foreground antialiased">
-        <AppProvider>
-          {children}
-          <Toaster />
-        </AppProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans bg-background text-foreground antialiased transition-colors duration-200">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AppProvider>
+            {children}
+            <Toaster />
+            <BackToTop />
+          </AppProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+
+
