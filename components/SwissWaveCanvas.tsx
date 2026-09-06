@@ -27,14 +27,20 @@ export default function SwissWaveCanvas() {
       const width = canvas.width;
       const height = canvas.height;
 
+      const isDark =
+        typeof document !== 'undefined' &&
+        document.documentElement.classList.contains('dark');
+
       ctx.clearRect(0, 0, width, height);
 
-      // 1. High-Contrast Light Mode Technical Grid (Dark Charcoal Lines)
+      // 1. High-Contrast Technical Grid
       const gridSize = 60;
       ctx.lineWidth = 1;
 
       // Vertical & Horizontal Grid Lines
-      ctx.strokeStyle = 'rgba(15, 23, 42, 0.12)';
+      ctx.strokeStyle = isDark
+        ? 'rgba(248, 250, 252, 0.12)'
+        : 'rgba(15, 23, 42, 0.12)';
       for (let x = 0; x < width; x += gridSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -49,7 +55,9 @@ export default function SwissWaveCanvas() {
       }
 
       // Grid Intersection Crosshair Ticks
-      ctx.strokeStyle = 'rgba(15, 23, 42, 0.22)';
+      ctx.strokeStyle = isDark
+        ? 'rgba(52, 211, 153, 0.45)'
+        : 'rgba(15, 23, 42, 0.22)';
       ctx.lineWidth = 1.2;
       const tickSize = 3;
       for (let x = gridSize; x < width; x += gridSize) {
@@ -68,7 +76,9 @@ export default function SwissWaveCanvas() {
       const arcCenterY = height * 0.15;
       const radii = [180, 320, 480, 640, 800, 980, 1180];
 
-      ctx.strokeStyle = 'rgba(15, 23, 42, 0.16)';
+      ctx.strokeStyle = isDark
+        ? 'rgba(248, 250, 252, 0.15)'
+        : 'rgba(15, 23, 42, 0.16)';
       ctx.lineWidth = 1.2;
       radii.forEach((r) => {
         ctx.beginPath();
@@ -80,23 +90,29 @@ export default function SwissWaveCanvas() {
       const blCenterX = width * 0.05;
       const blCenterY = height * 0.95;
       const blRadii = [240, 420, 620, 840];
-      ctx.strokeStyle = 'rgba(15, 23, 42, 0.14)';
+      ctx.strokeStyle = isDark
+        ? 'rgba(52, 211, 153, 0.3)'
+        : 'rgba(15, 23, 42, 0.14)';
       blRadii.forEach((r) => {
         ctx.beginPath();
         ctx.arc(blCenterX, blCenterY, r, 0, Math.PI * 2);
         ctx.stroke();
       });
 
-      // 3. High-Contrast Dark Contour Ribbon Curves
+      // 3. High-Contrast Contour Ribbon Curves
       const ribbons = 16;
       const points = 120;
 
       for (let r = 0; r < ribbons; r++) {
         ctx.beginPath();
         const rOffset = (r / ribbons) * Math.PI * 2;
-        // Higher opacity range for sharp dark charcoal / black contour lines
         const opacity = 0.12 + (1 - r / ribbons) * 0.26;
-        ctx.strokeStyle = `rgba(15, 23, 42, ${opacity})`;
+
+        ctx.strokeStyle = isDark
+          ? r % 3 === 0
+            ? `rgba(52, 211, 153, ${opacity + 0.1})`
+            : `rgba(248, 250, 252, ${opacity + 0.08})`
+          : `rgba(15, 23, 42, ${opacity})`;
         ctx.lineWidth = 1.4;
 
         for (let i = 0; i <= points; i++) {
@@ -136,6 +152,8 @@ export default function SwissWaveCanvas() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full block pointer-events-none opacity-95"
       />
+      {/* Semi-transparent dark/light overlay above canvas so background animation stays visible */}
+      <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/85 backdrop-blur-[1px] pointer-events-none transition-colors duration-200" />
     </div>
   );
 }

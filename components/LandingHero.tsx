@@ -67,7 +67,7 @@ export default function LandingHero({
       {/* Sleek Modern Hero Section */}
       <section className="relative z-10 mx-auto max-w-[1440px] px-6 py-16 md:px-8 lg:py-24">
         <div className="max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/40 px-3.5 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-400 backdrop-blur-sm">
             <span className="h-2 w-2 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />
             LIVE PROTOCOL · REGULATORY COMPLIANT
           </div>
@@ -93,7 +93,7 @@ export default function LandingHero({
               size="lg"
               variant="outline"
               onClick={onOpenProofs}
-              className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 px-6 py-3 text-sm font-semibold shadow-sm"
+              className="bg-white/80 dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 px-6 py-3 text-sm font-semibold shadow-sm backdrop-blur-sm"
             >
               View Architecture Proofs
             </Button>
@@ -103,7 +103,7 @@ export default function LandingHero({
 
       {/* Platform Architecture Grid */}
       <section className="relative z-10 mx-auto max-w-[1440px] px-6 py-8 md:px-8">
-        <div className="border-b border-slate-200 dark:border-slate-800 pb-4 mb-8">
+        <div className="border-b border-slate-200 dark:border-slate-800/60 pb-4 mb-8">
           <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Chain of Custody Protocol</p>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">Platform Hub Architecture</h2>
         </div>
@@ -116,11 +116,11 @@ export default function LandingHero({
                 key={step.step}
                 whileHover={{ y: -3 }}
                 onClick={() => onNavigate(step.tab)}
-                className="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 shadow-sm flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-600 transition-all"
+                className="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md p-6 shadow-sm flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-700 transition-all"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50/80 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
                       <Icon className="h-5 w-5" style={{ color: step.color }} />
                     </div>
                     <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">[{step.step}]</span>

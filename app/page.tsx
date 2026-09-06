@@ -59,7 +59,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans selection:bg-emerald-600 selection:text-white transition-colors duration-200">
+    <div className="relative min-h-screen text-slate-900 dark:text-slate-100 font-sans selection:bg-emerald-600 selection:text-white transition-colors duration-200">
       <AuthModal />
       <CdscoModal open={cdscoOpen} onClose={() => setCdscoOpen(false)} />
       <Eip712Modal open={eip712Open} onClose={() => setEip712Open(false)} />
@@ -69,7 +69,7 @@ export default function Home() {
       <SwissWaveCanvas />
 
       {/* Top Navigation Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md font-sans">
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md font-sans">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2.5 group">

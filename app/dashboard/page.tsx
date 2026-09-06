@@ -95,11 +95,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
+    <div className="relative min-h-screen text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
       <AuthModal />
       <SwissWaveCanvas />
       
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 dark:border-slate-800 dark:bg-slate-900/95 backdrop-blur-md font-sans">
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md font-sans">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
           <div className="flex items-center gap-4">
             <button
@@ -119,7 +119,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3 font-sans">
-            <div className="hidden items-center gap-2 border border-emerald-200 bg-emerald-50 dark:border-emerald-900/50 dark:bg-emerald-950/40 px-3.5 py-1.5 text-xs text-emerald-800 dark:text-emerald-300 font-semibold sm:flex rounded-full">
+            <div className="hidden items-center gap-2 border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1.5 text-xs text-emerald-800 dark:text-emerald-400 font-semibold sm:flex rounded-full backdrop-blur-sm">
               <span className="h-2 w-2 animate-pulse bg-emerald-600 dark:bg-emerald-400 rounded-full" />
               Polygon Amoy · Operational
             </div>
@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
             {user ? (
               <div className="group relative">
-                <button className="flex items-center gap-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-1.5 text-left hover:border-slate-400 dark:hover:border-slate-600 text-xs rounded-lg font-sans shadow-sm">
+                <button className="flex items-center gap-2.5 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-3.5 py-1.5 text-left hover:border-slate-400 dark:hover:border-slate-600 text-xs rounded-lg font-sans shadow-sm">
                   <div
                     className="flex h-6 w-6 items-center justify-center font-bold text-white rounded-md text-xs"
                     style={{ backgroundColor: user.avatarColor || '#10B981' }}
@@ -147,7 +147,7 @@ export default function DashboardPage() {
                   </div>
                   <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                 </button>
-                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 text-xs rounded-lg font-sans">
+                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 text-xs rounded-lg font-sans">
                   <div className="border-b border-slate-200 dark:border-slate-700 pb-2 mb-1 px-3 pt-2 text-[11px] text-amber-800 dark:text-amber-400 font-semibold">
                     ROLE: {user.role}
                   </div>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Workspace Navigation Bar */}
-      <div className="relative z-10 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+      <div className="relative z-10 border-b border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md">
         <div className="mx-auto max-w-[1440px] px-6 md:px-8">
           <nav className="flex space-x-1 overflow-x-auto py-2 text-xs font-sans">
             {visiblePortalTabs.map((tab) => {
@@ -190,8 +190,8 @@ export default function DashboardPage() {
                   onClick={() => switchPortal(tab.id)}
                   className={`flex items-center gap-2 rounded-lg px-4 py-2.5 font-medium transition-all ${
                     active
-                      ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-600/20'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-emerald-600 dark:bg-emerald-500 text-white font-semibold shadow-md shadow-emerald-600/20'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
