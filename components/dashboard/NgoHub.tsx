@@ -16,6 +16,7 @@ import {
   SectionHeader,
   EmptyState,
 } from './shared';
+import AccessRestricted from './AccessRestricted';
 import {
   Check,
   HeartHandshake,
@@ -60,18 +61,11 @@ export default function NgoHub() {
   // Strict Security Guard Check for Unprivileged Personas
   if (user?.role !== 'NGO' && (user?.role as string) !== 'RECIPIENT') {
     return (
-      <div className="mx-auto my-12 max-w-2xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-lg font-sans">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 border border-red-200 text-red-600 mb-5">
-          <ShieldAlert className="h-8 w-8" />
-        </div>
-        <h2 className="text-xl font-bold text-slate-900">Access Restricted: Registered NGO Partners Only</h2>
-        <p className="mt-3 text-sm leading-relaxed text-slate-700 font-medium">
-          Subsidized medicine sourcing and health credit redemptions are reserved exclusively for verified NGO partners.
-        </p>
-        <div className="mt-6 border-t border-slate-100 pt-4 text-xs text-slate-500">
-          FCRA / NITI Aayog Darpan NGO registration required for medicine allocation requests and clinic distribution.
-        </div>
-      </div>
+      <AccessRestricted
+        title="Access Restricted: Registered NGO Partners Only"
+        description="Subsidized medicine sourcing and health credit redemptions are reserved exclusively for verified NGO partners."
+        footer="FCRA / NITI Aayog Darpan NGO registration required for medicine allocation requests and clinic distribution."
+      />
     );
   }
   const [search, setSearch] = useState('');
