@@ -152,8 +152,8 @@ export default function SwissWaveCanvas() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full block pointer-events-none opacity-95"
       />
-      {/* Semi-transparent dark/light overlay above canvas so background animation stays visible */}
-      <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/85 backdrop-blur-[1px] pointer-events-none transition-colors duration-200" />
+      {/* Semi-transparent overlay: light=white veil, dark=deep slate backdrop — keeps canvas lines glowing through */}
+      <div className="absolute inset-0 bg-white/75 dark:bg-slate-950/[0.88] pointer-events-none transition-colors duration-300" />
     </div>
   );
 }

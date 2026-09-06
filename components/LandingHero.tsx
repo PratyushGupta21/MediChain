@@ -67,7 +67,7 @@ export default function LandingHero({
       {/* Sleek Modern Hero Section */}
       <section className="relative z-10 mx-auto max-w-[1440px] px-6 py-16 md:px-8 lg:py-24">
         <div className="max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-400 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 dark:border-emerald-800/60 bg-emerald-100 dark:bg-emerald-950/60 px-3.5 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-400">
             <span className="h-2 w-2 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />
             LIVE PROTOCOL · REGULATORY COMPLIANT
           </div>

@@ -99,7 +99,7 @@ export default function DashboardPage() {
       <AuthModal />
       <SwissWaveCanvas />
       
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md font-sans">
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-950/85 backdrop-blur-md font-sans transition-colors duration-300">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
           <div className="flex items-center gap-4">
             <button
@@ -119,7 +119,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3 font-sans">
-            <div className="hidden items-center gap-2 border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1.5 text-xs text-emerald-800 dark:text-emerald-400 font-semibold sm:flex rounded-full backdrop-blur-sm">
+            <div className="hidden items-center gap-2 border border-emerald-300 dark:border-emerald-800/60 bg-emerald-100 dark:bg-emerald-950/60 px-3.5 py-1.5 text-xs text-emerald-800 dark:text-emerald-400 font-semibold sm:flex rounded-full">
               <span className="h-2 w-2 animate-pulse bg-emerald-600 dark:bg-emerald-400 rounded-full" />
               Polygon Amoy · Operational
             </div>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Workspace Navigation Bar */}
-      <div className="relative z-10 border-b border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md">
+      <div className="relative z-10 border-b border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
         <div className="mx-auto max-w-[1440px] px-6 md:px-8">
           <nav className="flex space-x-1 overflow-x-auto py-2 text-xs font-sans">
             {visiblePortalTabs.map((tab) => {
