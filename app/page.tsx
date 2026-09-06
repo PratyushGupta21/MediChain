@@ -69,7 +69,7 @@ export default function Home() {
       <SwissWaveCanvas />
 
       {/* Top Navigation Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-950/85 backdrop-blur-md font-sans transition-colors duration-300">
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 dark:border-zinc-800 bg-white/80 dark:bg-black/80 backdrop-blur-md font-sans transition-colors duration-300">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2.5 group">
@@ -119,7 +119,7 @@ export default function Home() {
 
             {user ? (
               <div className="group relative">
-                <button className="flex items-center gap-2.5 border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 px-3.5 py-1.5 text-left hover:border-slate-400 dark:hover:border-slate-600 text-xs rounded-lg font-sans shadow-sm">
+                <button className="flex items-center gap-2.5 border border-slate-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900/80 px-3.5 py-1.5 text-left hover:border-slate-400 dark:hover:border-zinc-600 text-xs rounded-lg font-sans shadow-sm">
                   <div
                     className="flex h-6 w-6 items-center justify-center font-bold text-white rounded-md text-xs"
                     style={{ backgroundColor: user.avatarColor || '#10B981' }}
@@ -131,8 +131,8 @@ export default function Home() {
                   </div>
                   <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                 </button>
-                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/95 backdrop-blur-md p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 text-xs rounded-lg font-sans">
-                  <div className="border-b border-slate-200 dark:border-slate-700 pb-2 mb-1 px-3 pt-2 text-[11px] text-amber-800 dark:text-amber-400 font-semibold">
+                <div className="invisible absolute right-0 top-full mt-2 w-52 border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 backdrop-blur-md p-1.5 opacity-0 shadow-2xl transition group-focus-within:visible group-focus-within:opacity-100 text-xs rounded-lg font-sans">
+                  <div className="border-b border-slate-200 dark:border-zinc-700 pb-2 mb-1 px-3 pt-2 text-[11px] text-amber-800 dark:text-amber-400 font-semibold">
                     ROLE: {user.role}
                   </div>
                   <button

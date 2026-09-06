@@ -1,9 +1,26 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function SwissWaveCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Theme observer for CSS filter application
+    const checkDark = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    checkDark();
+
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,10 +44,6 @@ export default function SwissWaveCanvas() {
       const width = canvas.width;
       const height = canvas.height;
 
-      const isDark =
-        typeof document !== 'undefined' &&
-        document.documentElement.classList.contains('dark');
-
       ctx.clearRect(0, 0, width, height);
 
       // 1. High-Contrast Technical Grid
@@ -38,9 +51,7 @@ export default function SwissWaveCanvas() {
       ctx.lineWidth = 1;
 
       // Vertical & Horizontal Grid Lines
-      ctx.strokeStyle = isDark
-        ? 'rgba(248, 250, 252, 0.12)'
-        : 'rgba(15, 23, 42, 0.12)';
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.12)';
       for (let x = 0; x < width; x += gridSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -55,9 +66,7 @@ export default function SwissWaveCanvas() {
       }
 
       // Grid Intersection Crosshair Ticks
-      ctx.strokeStyle = isDark
-        ? 'rgba(52, 211, 153, 0.45)'
-        : 'rgba(15, 23, 42, 0.22)';
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.24)';
       ctx.lineWidth = 1.2;
       const tickSize = 3;
       for (let x = gridSize; x < width; x += gridSize) {
@@ -76,9 +85,7 @@ export default function SwissWaveCanvas() {
       const arcCenterY = height * 0.15;
       const radii = [180, 320, 480, 640, 800, 980, 1180];
 
-      ctx.strokeStyle = isDark
-        ? 'rgba(248, 250, 252, 0.15)'
-        : 'rgba(15, 23, 42, 0.16)';
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.16)';
       ctx.lineWidth = 1.2;
       radii.forEach((r) => {
         ctx.beginPath();
@@ -90,9 +97,7 @@ export default function SwissWaveCanvas() {
       const blCenterX = width * 0.05;
       const blCenterY = height * 0.95;
       const blRadii = [240, 420, 620, 840];
-      ctx.strokeStyle = isDark
-        ? 'rgba(52, 211, 153, 0.3)'
-        : 'rgba(15, 23, 42, 0.14)';
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.14)';
       blRadii.forEach((r) => {
         ctx.beginPath();
         ctx.arc(blCenterX, blCenterY, r, 0, Math.PI * 2);
@@ -108,11 +113,7 @@ export default function SwissWaveCanvas() {
         const rOffset = (r / ribbons) * Math.PI * 2;
         const opacity = 0.12 + (1 - r / ribbons) * 0.26;
 
-        ctx.strokeStyle = isDark
-          ? r % 3 === 0
-            ? `rgba(52, 211, 153, ${opacity + 0.1})`
-            : `rgba(248, 250, 252, ${opacity + 0.08})`
-          : `rgba(15, 23, 42, ${opacity})`;
+        ctx.strokeStyle = `rgba(15, 23, 42, ${opacity})`;
         ctx.lineWidth = 1.4;
 
         for (let i = 0; i <= points; i++) {
@@ -147,13 +148,17 @@ export default function SwissWaveCanvas() {
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-full min-h-screen overflow-hidden pointer-events-none z-0">
+    <div className="fixed inset-0 w-full h-full min-h-screen overflow-hidden pointer-events-none z-0 bg-white dark:bg-black transition-colors duration-300">
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full block pointer-events-none opacity-95"
+        className="absolute inset-0 w-full h-full block pointer-events-none opacity-95 transition-[filter] duration-300"
+        style={
+          isDark
+            ? { filter: 'invert(1) hue-rotate(180deg) brightness(1.8) contrast(1.5)' }
+            : undefined
+        }
       />
-      {/* Semi-transparent overlay: light=white veil, dark=deep slate backdrop — keeps canvas lines glowing through */}
-      <div className="absolute inset-0 bg-white/75 dark:bg-slate-950/[0.88] pointer-events-none transition-colors duration-300" />
     </div>
   );
 }
+
