@@ -14,6 +14,7 @@ import {
 import { ThemeToggle } from '@/components/ThemeToggle';
 import SwissWaveCanvas from '@/components/SwissWaveCanvas';
 import LandingHero from '@/components/LandingHero';
+import FAQSection from '@/components/FAQSection';
 import AuthModal from '@/components/auth-modal';
 import { CdscoModal, Eip712Modal, PolygonModal } from '@/components/footer-modals';
 
@@ -160,12 +161,13 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Landing Hero Content */}
+      {/* Main Landing Hero & FAQ Content */}
       <main>
         <LandingHero
           onNavigate={navigateProtected}
           onOpenProofs={() => setEip712Open(true)}
         />
+        <FAQSection />
       </main>
     </div>
   );
